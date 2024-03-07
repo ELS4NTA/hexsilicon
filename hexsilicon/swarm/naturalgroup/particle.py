@@ -1,5 +1,4 @@
 from hexsilicon.swarm import swarm
-import numpy as np
 
 class Particle(swarm.Swarm):
 
@@ -14,3 +13,7 @@ class Particle(swarm.Swarm):
 
     def update_swarm(self):
         pass
+
+
+def importar():
+    print("Importado")

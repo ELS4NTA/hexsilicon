@@ -1,4 +1,4 @@
-from hexsilicon.swarm.population import ant
+from hexsilicon.swarm.naturalgroup import ant
 from hexsilicon.problem import problem
 
 

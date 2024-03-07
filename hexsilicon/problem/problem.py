@@ -1,5 +1,5 @@
-from domain import Domain
-from function import Function
+from .domain import Domain
+from .function import Function
 from abc import ABC, abstractmethod
 
 

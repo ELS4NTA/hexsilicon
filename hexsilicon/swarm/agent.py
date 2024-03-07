@@ -1,11 +1,7 @@
-from hexsilicon.problem import solution
+from hexsilicon.problem.solution import Solution
 
 
 class Agent(object):
 
-    def __init__(self, context: dict):
-        self.context = context
-        self.solution = None
-
-    def get_solution(self):
-        return self.solution
+    def __init__(self, initial_solution: Solution):
+        self.solution = initial_solution
