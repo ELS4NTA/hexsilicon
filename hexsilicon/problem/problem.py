@@ -1,6 +1,7 @@
 from .domain import Domain
 from .function import Function
 from abc import ABC, abstractmethod
+import networkx as nx
 
 
 class Problem(object):
@@ -9,6 +10,10 @@ class Problem(object):
         self.domain = domain
         self.function = function
         self.solution = None
+        self.representation = None
+
+    def get_representation(self) -> nx.DiGraph:
+        return self.representation
 
     def set_domain(self, new_domain: Domain) -> None:
         self.domain = new_domain
