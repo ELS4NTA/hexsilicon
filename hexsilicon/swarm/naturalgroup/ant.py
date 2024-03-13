@@ -15,7 +15,7 @@ class AntGroup(Swarm, Behavior):
         self.population = None
 
     def generate_initial_swarm(self):
-        self.population = np.array(Agent(), size=self.hyperparams['n_ants'])
+        self.population = np.array([Agent() for _ in range(self.hyperparams['n_ants'])])
 
     def metaheuristic(self):
         data_frame = self.problem.domain.space
@@ -26,55 +26,41 @@ class AntGroup(Swarm, Behavior):
             'source',
             'target',
             ['weight', 'pheromone'],
-            create_using=nx.Graph if self.hyperparams['undirected'] else nx.DiGraph)
+            create_using=nx.Graph)
 
         # Inicializar el mejor camino
         best_path = None
-        best_path_length = np.inf
-        n_points = self.problem.get_representation().number_of_nodes()
+        best_path_eval = np.inf
 
         # Por cada iteración
         for _ in range(self.hyperparams['n_iterations']):
             paths = []
+            evals = []
 
             # Por cada hormiga
-            for _ in range(self.population):
-                visited = np.zeros(n_points, dtype=bool)
-                current_point = np.random.randint(n_points)
-                visited[current_point] = True
+            for ant in self.population:
+                current_point = self.problem.domain.restriction.get_restriction()['initial_point']
                 path = np.array([current_point])
-                path = self.movement_swarm(visited, path, current_point)
+                path = self.movement_swarm(path, current_point)
+                ant.solution = Solution(self.problem.domain, path)
+                evals.append(self.problem.call_function(ant.solution))
                 paths.append(path)
 
-            # Por cada camino evaluarlo
-            evals = []
-            for path in paths:
-                path_length = 0
-                for i in range(n_points - 1):
-                    path_length += self.distance(path[i], path[i + 1])
-                path_length += self.distance(path[-1], path[0])
-                evals.append(path_length)
-
             # Actualizar el mejor camino
-            if min(evals) < best_path_length:
+            if min(evals) < best_path_eval:
                 best_path = paths[np.argmin(evals)]
-                best_path_length = min(evals)
+                self.problem.solution = Solution(self.problem.domain, best_path)
+                best_path_eval = min(evals)
+                print('Best path:', best_path, 'with cost:', best_path_eval)
 
             # Actualizar feromonas
             self.update_swarm()
-
-    def generate_initial_solution(self):
-        path = np.random.randint(0, self.problem.domain.space["n_points"], size=self.problem.domain.space["n_points"], replace=False)
-        solution = Solution(self.problem.domain, path)
-        return solution
-    
-    def distance(self, point1, point2):
-        return np.sqrt(np.sum((point1 - point2)**2))
+        return best_path
 
     @abstractmethod
     def update_swarm(self):
         pass
 
     @abstractmethod
-    def movement_swarm(self, visited, path, current_point):
+    def movement_swarm(self, path, current_point):
         pass

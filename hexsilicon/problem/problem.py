@@ -21,7 +21,6 @@ class Problem(object):
     def get_domain(self) -> Domain:
         return self.domain
 
-    @abstractmethod
-    def solve(self):
-        pass
+    def call_function(self, solution) -> float:
+        return self.function.evaluate(solution, self.representation)
 

@@ -9,5 +9,5 @@ class Function(ABC):
         pass
 
     @abstractmethod
-    def evaluate(self, solution: Solution):
+    def evaluate(self, solution, representation):
         pass
