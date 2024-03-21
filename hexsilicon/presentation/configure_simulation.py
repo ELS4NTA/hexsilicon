@@ -1,31 +1,46 @@
-import tkinter as tk
+import ttkbootstrap as ttk
 
 
-class SimulationConfigure(tk.Frame):
+class SimulationConfigure(ttk.Frame):
     def __init__(self, master=None, problems=None):
         super().__init__(master)
         self.master = master
         self.problems = problems
-        self.pack()
         self.create_widgets()
+        self.place_widgets()
+        self.pack()
 
     def create_widgets(self):
-        self.simulation = tk.Label(self, text="Configuración Inicial")
-        self.simulation.grid(row=0, column=0, columnspan=2)
+        # Title
+        self.simulation_title = ttk.Label(self, text="Configuración Inicial", font=("Arial Bold", 20))
 
-        self.problem_label = tk.Label(self, text="Problema")
-        self.problem_label.grid(row=1, column=0)
-
+        # Problems selection
+        self.problem_frame = ttk.Labelframe(self, text="Problemas")
+        # add to label frame problem combo box
         if self.problems is not None:
-            self.problem_listbox = tk.Listbox(self, selectmode=tk.SINGLE, bg=self.cget('bg'), fg='black', bd=0, highlightthickness=0, relief='flat', font=('Arial', 12))
-            for problem in self.problems.get_problems():
-                self.problem_listbox.insert(tk.END, problem)
-        self.problem_listbox.grid(row=2, column=0, sticky='nsew')
+            self.problem_combobox = ttk.Combobox(
+                self.problem_frame, values=self.problems.get_problems())
 
-        # Ajustar el tamaño del ListBox al tamaño de la ventana
-        self.grid_rowconfigure(2, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        # Algorithm selection
+        self.algorithm_frame = ttk.Labelframe(self, text="Algoritmo")
+        self.algorithm = ttk.Combobox(self.algorithm_frame, values=[
+                                      "Algoritmo 1", "Algoritmo 2", "Algoritmo 3"])
 
-        self.algorithm = tk.Label(self, text="Algoritmo")
-        self.algorithm.grid(row=1, column=1)
+        # Start button
+        self.start_button = ttk.Button(
+            self, text="Iniciar Simulación", command=self.master.start_simulation)
 
+    def place_widgets(self):
+        # Title
+        self.simulation_title.grid(row=0, column=0, columnspan=2, pady=10)
+
+        # Problems selection
+        self.problem_frame.grid(row=1, column=0, padx=10)
+        self.problem_combobox.grid(row=0, column=0, padx=20, pady=20)
+
+        # Algorithm selection
+        self.algorithm_frame.grid(row=1, column=1, padx=10)
+        self.algorithm.grid(row=0, column=0, padx=20, pady=20)
+
+        # Start button
+        self.start_button.grid(row=3, column=0, columnspan=2, pady=10)
