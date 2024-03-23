@@ -1,4 +1,4 @@
-from hexsilicon.swarm.naturalgroup.ant import AntGroup
+from hexsilicon.domain.swarm.naturalgroup.ant import AntGroup
 import numpy as np
 
 

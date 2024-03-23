@@ -1,5 +1,12 @@
+import tkinter as tk
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+import matplotlib.pyplot as plt
+import networkx as nx
 import ttkbootstrap as ttk
+from matplotlib import figure
 from ttkbootstrap.constants import *
+
 
 class Execution(ttk.Frame):
 
@@ -8,6 +15,7 @@ class Execution(ttk.Frame):
         self.create_widgets()
         self.place_widgets()
         self.pack(expand=YES, fill=BOTH)
+        self.plot_graph()
 
     def create_widgets(self):
         # Buttons to see problem, natual or stop execution
@@ -35,7 +43,7 @@ class Execution(ttk.Frame):
 
         # Best Global Solution
         self.best_global_solution_frame = ttk.Labelframe(self, text="Mejor Solución Global")
-        self.best_global_solution = ttk.Label(self.best_global_solution_frame, text="Mejor Solución Global")
+        #self.best_global_solution = ttk.Label(self.best_global_solution_frame, text="Mejor Solución Global")
 
         # Best Local Solution
         self.best_local_solution_frame = ttk.Labelframe(self, text="Mejor Solución Local")
@@ -71,7 +79,7 @@ class Execution(ttk.Frame):
 
         # Best Global Solution
         self.best_global_solution_frame.place(x=(padding*2)+window_width*0.33,y=window_height*0.6+padding,width=window_width*0.33, height=window_width*0.2)
-        self.best_global_solution.grid(row=0, column=0)
+        #self.best_global_solution.grid(row=0, column=0)
 
         # Best Local Solution
         self.best_local_solution_frame.place(x=(padding*3)+window_width*0.66,y=window_height*0.6+padding,width=window_width*0.3, height=window_width*0.2)
@@ -85,6 +93,35 @@ class Execution(ttk.Frame):
 
     def stop_execution(self):
         pass
+    
+    def plot_graph(self):
+        G = nx.Graph()  
+        G.add_edges_from([(1, 2), (1, 3), (2, 3), (3, 4), (4, 5)])
+
+        for u, v in G.edges():
+            G[u][v]['weight'] = 1
+
+        path = [1, 2, 3, 4, 5]  # Ruta de ejemplo
+
+        path_edges = list(zip(path, path[1:]))
+
+        edge_colors = [
+            "red" if edge in path_edges or tuple(reversed(edge)) in path_edges else "black"
+            for edge in G.edges()
+        ]
+
+        pos = nx.spring_layout(G)
+        fig, ax = plt.subplots()
+        nx.draw_networkx_nodes(G, pos, ax=ax)
+        nx.draw_networkx_edges(G, pos, edge_color=edge_colors, ax=ax)
+        nx.draw_networkx_labels(G, pos, ax=ax)
+        
+        canvas = FigureCanvasTkAgg(fig, master=self.best_global_solution_frame)
+        canvas.draw()
+        canvas.get_tk_widget().grid(sticky='nsew')  
+        
+        self.best_global_solution_frame.grid_rowconfigure(0, weight=1)
+        self.best_global_solution_frame.grid_columnconfigure(0, weight=1)
 
 
     def place_solution_results(self):

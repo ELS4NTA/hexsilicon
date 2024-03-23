@@ -1,4 +1,4 @@
-from hexsilicon.problem.solution import Solution
+from hexsilicon.domain.problem.solution import Solution
 
 
 class Agent(object):

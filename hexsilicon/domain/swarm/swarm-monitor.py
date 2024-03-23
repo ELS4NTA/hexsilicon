@@ -1,4 +1,4 @@
-from hexsilicon.problem.problem import Problem
+from hexsilicon.domain.problem.problem import Problem
 from abc import abstractmethod
 
 
@@ -7,6 +7,7 @@ class Swarm(object):
     def __init__(self, hyperparams: dict, problem: Problem):
         self.hyperparams = hyperparams
         self.problem = problem
+        self.behavior = None
 
     @abstractmethod
     def generate_initial_swarm(self):
@@ -14,10 +15,6 @@ class Swarm(object):
 
     @abstractmethod
     def metaheuristic(self):
-        pass
-
-    @abstractmethod
-    def generate_initial_solution(self):
         pass
 
     @abstractmethod

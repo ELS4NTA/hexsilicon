@@ -1,4 +1,4 @@
-from hexsilicon.swarm import swarm
+from hexsilicon.domain.swarm import swarm
 
 class Particle(swarm.Swarm):
 
