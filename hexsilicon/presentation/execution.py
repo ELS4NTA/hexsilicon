@@ -1,11 +1,8 @@
-import tkinter as tk
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
-import matplotlib.pyplot as plt
-import networkx as nx
 import ttkbootstrap as ttk
-from matplotlib import figure
 from ttkbootstrap.constants import *
+from hexsilicon.presentation.dashboard import Dashboard
+from hexsilicon.presentation.control import Control
+from hexsilicon.presentation.evironment import Environment
 
 
 class Execution(ttk.Frame):
@@ -13,41 +10,30 @@ class Execution(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.create_widgets()
-        self.place_widgets()
+        #self.place_widgets()
         self.pack(expand=YES, fill=BOTH)
-        self.plot_graph()
 
     def create_widgets(self):
         # Buttons to see problem, natual or stop execution
-        self.buttons_frame = ttk.Labelframe(self, text="Ejecución")
-        self.see_problem_button = ttk.Button(self.buttons_frame, text="Ver Problema", command=self.see_problem)
-        self.start_execution_button = ttk.Button(self.buttons_frame, text="Ver Natural", command=self.see_natural)
-        self.stop_execution_button = ttk.Button(self.buttons_frame, text="Detener Ejecución", command=self.stop_execution)
+        # self.buttons_frame = ttk.Labelframe(self, text="Ejecución")
+        # self.see_problem_button = ttk.Button(self.buttons_frame, text="Ver Problema", command=self.see_problem)
+        #self.start_execution_button = ttk.Button(self.buttons_frame, text="Ver Natural", command=self.see_natural)
+        #self.stop_execution_button = ttk.Button(self.buttons_frame, text="Detener Ejecución", command=self.stop_execution)
 
         # Simulation environment
-        self.simulation_environment_frame = ttk.Labelframe(self, text="Entorno de Simulación")
-        self.simulation_environment = ttk.Label(self.simulation_environment_frame, text="Entorno de Simulación")
+        #self.simulation_environment_frame = ttk.Labelframe(self, text="Entorno de Simulación")
+        #self.simulation_environment = ttk.Label(self.simulation_environment_frame, text="Entorno de Simulación")
 
-        # Hyperparameters
-        self.hyperparameters_frame = ttk.Labelframe(self, text="Hiperparámetros")
-        for hyperparameter in ["Hiperparámetro 1", "Hiperparámetro 2", "Hiperparámetro 3"]:
-            ttk.Label(self.hyperparameters_frame, text=hyperparameter).pack()
+        self.control = Control(self)
+        self.dashboard = Dashboard(self)
+        self.environment = Environment(self)
+        self.columnconfigure(0, weight=4)
+        self.columnconfigure(1, weight=1)
+        self.control.grid(column=0, row=0, sticky=NW)
+        self.environment.grid(column=0, row=1, sticky=N)
+        self.dashboard.grid(column=1, row=0, rowspan=2, sticky=E)
 
-        # Simulation velocity
-        self.simulation_velocity_frame = ttk.Labelframe(self, text="Velocidad de Simulación")
-        self.simulation_velocity = ttk.Label(self.simulation_velocity_frame, text="Velocidad de Simulación")
-        
-        # Ghraphic funcition
-        self.graphic_frame = ttk.Labelframe(self, text="Gráfica")
-        self.graphic = ttk.Label(self.graphic_frame, text="Gráfica")
 
-        # Best Global Solution
-        self.best_global_solution_frame = ttk.Labelframe(self, text="Mejor Solución Global")
-        #self.best_global_solution = ttk.Label(self.best_global_solution_frame, text="Mejor Solución Global")
-
-        # Best Local Solution
-        self.best_local_solution_frame = ttk.Labelframe(self, text="Mejor Solución Local")
-        self.best_local_solution = ttk.Label(self.best_local_solution_frame, text="Mejor Solución Local")
 
     def place_widgets(self):
         geometry = self.master.winfo_geometry()
@@ -65,26 +51,6 @@ class Execution(ttk.Frame):
         self.simulation_environment_frame.place(x=padding,y=padding+window_height*0.1,width=window_width*0.66+padding, height=window_height*0.5)
         self.simulation_environment.grid(row=0, column=0)
 
-        # Hyperparameters
-        self.hyperparameters_frame.place(x=(padding*2)+window_width*0.66+padding,y=padding,width=window_width*0.3, height=window_height*0.3)
-        self.hyperparameters_frame.grid_propagate(0)
-
-        # Simulation velocity
-        self.simulation_velocity_frame.place(x=(padding*2)+window_width*0.66+padding,y=padding+window_height*0.3,width=window_width*0.3, height=window_height*0.3)
-        self.simulation_velocity.grid(row=0, column=0)
-
-        # Ghraphic funcition
-        self.graphic_frame.place(x=padding,y=window_height*0.6+padding,width=window_width*0.33, height=window_width*0.2)
-        self.graphic.grid(row=0, column=0)
-
-        # Best Global Solution
-        self.best_global_solution_frame.place(x=(padding*2)+window_width*0.33,y=window_height*0.6+padding,width=window_width*0.33, height=window_width*0.2)
-        #self.best_global_solution.grid(row=0, column=0)
-
-        # Best Local Solution
-        self.best_local_solution_frame.place(x=(padding*3)+window_width*0.66,y=window_height*0.6+padding,width=window_width*0.3, height=window_width*0.2)
-        self.best_local_solution.grid(row=0, column=0)
-
     def see_problem(self):
         pass
 
@@ -93,36 +59,6 @@ class Execution(ttk.Frame):
 
     def stop_execution(self):
         pass
-    
-    def plot_graph(self):
-        G = nx.Graph()  
-        G.add_edges_from([(1, 2), (1, 3), (2, 3), (3, 4), (4, 5)])
-
-        for u, v in G.edges():
-            G[u][v]['weight'] = 1
-
-        path = [1, 2, 3, 4, 5]  # Ruta de ejemplo
-
-        path_edges = list(zip(path, path[1:]))
-
-        edge_colors = [
-            "red" if edge in path_edges or tuple(reversed(edge)) in path_edges else "black"
-            for edge in G.edges()
-        ]
-
-        pos = nx.spring_layout(G)
-        fig, ax = plt.subplots()
-        nx.draw_networkx_nodes(G, pos, ax=ax)
-        nx.draw_networkx_edges(G, pos, edge_color=edge_colors, ax=ax)
-        nx.draw_networkx_labels(G, pos, ax=ax)
-        
-        canvas = FigureCanvasTkAgg(fig, master=self.best_global_solution_frame)
-        canvas.draw()
-        canvas.get_tk_widget().grid(sticky='nsew')  
-        
-        self.best_global_solution_frame.grid_rowconfigure(0, weight=1)
-        self.best_global_solution_frame.grid_columnconfigure(0, weight=1)
-
 
     def place_solution_results(self):
         # pedir al enjmabre su mejor solucion global

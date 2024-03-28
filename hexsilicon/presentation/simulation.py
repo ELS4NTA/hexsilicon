@@ -8,7 +8,6 @@ class Simulation(ttk.Window):
         super().__init__()
         self.title("Configuración de la Simulación")
         self.configure_window()
-        self.add_components()
         self.create_widgets()
 
     def configure_window(self):
