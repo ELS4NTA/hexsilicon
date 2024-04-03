@@ -26,11 +26,12 @@ class Simulation(ttk.Window):
 
     def start_simulation(self):
         self.problem = self.simulation.get_problem()
+        self.algorithm = "SACO"
         print(self.problem.get_domain())
         for widget in self.winfo_children():
             widget.destroy()
         self.title("Ejecución de la Simulación")
-        self.execution = execution.Execution(master=self, algorithm=algorithm, problem=problem)
+        self.execution = execution.Execution(master=self, algorithm=self.algorithm, problem=self.problem)
 
 # De donde salen los problemas?
 class Problems:
@@ -46,7 +47,7 @@ class Swarms:
     def get_swarms(self):
         return ["Enjambre 1", "Enjambre 2", "Enjambre 3"]
     def get_algorithms(self):
-        return ["Algoritmo 1", "Algoritmo 2", "Algoritmo 3"]
+        return ["SACO", "Algoritmo 2", "Algoritmo 3"]
 
     def get_algorithm_description(self, algorithm):
         return "Algoritmo de enjambre de partículas"
