@@ -3,9 +3,10 @@ from ttkbootstrap.constants import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import networkx as nx
+from hexsilicon.presentation.observer import Observer
 
 
-class Graphic(ttk.Frame):
+class Graphic(Observer, ttk.Frame):
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -56,3 +57,6 @@ class Graphic(ttk.Frame):
         else:
             self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
             self.show_btn.config(text="Not show")
+
+    def update(self, *args, **kwargs):
+        self.example_problem_plot(*args, **kwargs)

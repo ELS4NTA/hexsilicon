@@ -5,8 +5,8 @@ import numpy as np
 # Simple Ant Colony Optimization (SACO) algorithm
 class SACO(AntGroup):
 
-    def __init__(self, hyperparams: dict, problem):
-        super().__init__(hyperparams, problem)
+    def __init__(self, problem):
+        super().__init__(problem)
 
     def movement_swarm(self, path, current_point):
         while self.problem.domain.restriction.get_restriction()['final_point'] != current_point:
@@ -24,5 +24,5 @@ class SACO(AntGroup):
     def update_swarm(self):
         graph = self.problem.get_representation()
         for edge in graph.edges(data=True):
-            edge[2]['pheromone'] *= (1 - self.hyperparams['rho'])
-            edge[2]['pheromone'] += self.hyperparams['q']
+            edge[2]['pheromone'] *= (1 - self.hyperparams['rho'][0])
+            edge[2]['pheromone'] += self.hyperparams['q'][0]

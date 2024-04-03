@@ -1,9 +1,11 @@
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
 import matplotlib.pyplot as plt
+import ttkbootstrap as ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from hexsilicon.presentation.observer import Observer
+from ttkbootstrap.constants import *
 
-class History(ttk.Frame):
+
+class History(Observer, ttk.Frame):
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -48,3 +50,7 @@ class History(ttk.Frame):
         else:
             self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
             self.show_btn.config(text="Not show")
+
+    def update(self, data):
+
+        print(data)

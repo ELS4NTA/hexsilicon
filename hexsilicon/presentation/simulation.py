@@ -24,11 +24,12 @@ class Simulation(ttk.Window):
         problems = Problems()
         self.simulation = configure_simulation.SimulationConfigure(master=self, problems=problems)
 
-    def start_simulation(self):
+    def start_simulation(self, algorithm, problem):
+        print(f"Starting simulation with algorithm: {algorithm} and problem: {problem}")
         for widget in self.winfo_children():
             widget.destroy()
         self.title("Ejecución de la Simulación")
-        self.execution = execution.Execution(master=self)
+        self.execution = execution.Execution(master=self, algorithm=algorithm, problem=problem)
 
 # De donde salen los problemas?
 class Problems:

@@ -26,4 +26,14 @@ class Hyperparameters(ttk.Frame):
         self.hyperparameters_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=100, pady=100)
         self.btn_group.pack(side=BOTTOM, expand=YES, fill=BOTH, padx=100)
 
+    def set_hyperparams(self, hyperparams):
+        # clear hyperparameters_frame
+        for widget in self.hyperparameters_frame.winfo_children():
+            widget.destroy()
+
+        for hyperparameter, value in hyperparams.items():
+            ttk.Label(self.hyperparameters_frame, text=hyperparameter).pack()
+            ttk.Scale(self.hyperparameters_frame, from_=value[1], to=value[2], orient="horizontal", value=value[0]).pack()
+
+        self.hyperparameters_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=100, pady=100)
 

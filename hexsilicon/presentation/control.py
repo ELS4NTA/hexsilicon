@@ -11,7 +11,7 @@ class Control(ttk.Labelframe):
 
     def create_widgets(self):
         self.back_button = ttk.Button(self, text="Back")
-        self.start_button = ttk.Button(self, text="Start")
+        self.start_button = ttk.Button(self, text="Start", command=self.master.start_execution)
         self.stop_button = ttk.Button(self, text="Stop")
         self.reset_button = ttk.Button(self, text="Reset")
         self.back_button.pack(side=LEFT, padx=10)

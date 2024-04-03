@@ -24,11 +24,11 @@ class SimulationConfigure(ttk.Frame):
         # Algorithm selection
         self.algorithm_frame = ttk.Labelframe(self, text="Algoritmo")
         self.algorithm = ttk.Combobox(self.algorithm_frame, values=[
-                                      "Algoritmo 1", "Algoritmo 2", "Algoritmo 3"])
+                                      "SACO", "Algoritmo 2", "Algoritmo 3"])
 
         # Start button
         self.start_button = ttk.Button(
-            self, text="Iniciar Simulación", command=self.master.start_simulation)
+            self, text="Iniciar Simulación", command=lambda: self.master.start_simulation(self.algorithm.get(), self.problem_combobox.get()))
 
     def place_widgets(self):
         # Title
