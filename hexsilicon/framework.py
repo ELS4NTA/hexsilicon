@@ -1,17 +1,11 @@
-from hexsilicon.swarm.naturalgroup import ant
-from hexsilicon.problem import problem
+from hexsilicon.presentation.simulation import Simulation
 
 
 class Hexsilicon(object):
 
     def __init__(self):
-        self.example_problem()
-        ant_swarm = ant.Ant()
-        ant_swarm.generate_initial_swarm()
-
-    def example_problem(self):
-        ej_problem = problem.Problem()
-
+        app = Simulation()
+        app.mainloop()
 
 
 if __name__ == "__main__":

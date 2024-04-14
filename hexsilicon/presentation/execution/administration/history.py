@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import ttkbootstrap as ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from hexsilicon.presentation.observer import Observer
 from ttkbootstrap.constants import *
+
+from hexsilicon.presentation.observer import Observer
 
 
 class History(Observer, ttk.Frame):
@@ -14,7 +15,8 @@ class History(Observer, ttk.Frame):
         self.place_widgets()
 
     def create_widgets(self):
-        self.show_btn = ttk.Button(self, text="Not show", bootstyle="primary", command=self.toggle_frame)
+        self.show_btn = ttk.Button(
+            self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
         self.example_function_plot()
 
@@ -34,8 +36,6 @@ class History(Observer, ttk.Frame):
         ax.set_ylabel("y")
         ax.set_title("Función cuadrática")
 
-
-
         # Mostrar la gráfica en el marco sin redimensionamiento
         self.canvas = FigureCanvasTkAgg(fig, master=self)
         self.canvas.draw()
@@ -46,11 +46,10 @@ class History(Observer, ttk.Frame):
     def toggle_frame(self):
         if self.canvas.get_tk_widget().winfo_ismapped():
             self.canvas.get_tk_widget().pack_forget()
-            self.show_btn.config(text="Show")
+            self.show_btn.config(text="Mostrar")
         else:
             self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
-            self.show_btn.config(text="Not show")
+            self.show_btn.config(text="Ocultar")
 
     def update(self, data):
-
         print(data)

@@ -1,28 +1,21 @@
+import networkx as nx
+import numpy as np
+
 from hexsilicon.domain.problem.problem import Problem
 from hexsilicon.domain.problem.solution import Solution
 from hexsilicon.domain.swarm.agent import Agent
-from hexsilicon.domain.swarm.behavior import Behavior
 from hexsilicon.domain.swarm.swarm import Swarm
-from abc import abstractmethod
-import numpy as np
-import networkx as nx
 
 
-class AntGroup(Swarm, Behavior):
+class AntColony(Swarm):
 
-    def __init__(self, problem: Problem):
-        super().__init__(problem)
-        self.population = None
-        self.hyperparams = {
-            'rho': (0.01, 0.0, 0.2),
-            'q': (1, 0, 10),
-            'n_ants': (7, 1, 100),
-            'pheromone_0': (1, -7, 50),
-            'n_iterations': (20, 1, 1000)
-        }
+    def __init__(self):
+        super().__init__()
 
-    def generate_initial_swarm(self):
-        self.population = np.array([Agent() for _ in range(self.hyperparams['n_ants'][0])])
+    def generate_swarm(self):
+        self.population = np.array(
+            [Agent("Ant") for _ in range(self.behavior.get_hyperparams["n_agents"][0])]
+        )
 
     def metaheuristic(self):
         data_frame = self.problem.domain.space
@@ -47,7 +40,8 @@ class AntGroup(Swarm, Behavior):
 
             # Por cada hormiga
             for ant in self.population:
-                current_point = self.problem.domain.restriction.get_restriction()['initial_point']
+                current_point = self.problem.domain.restriction.get_restriction()[
+                    'initial_point']
                 path = np.array([current_point])
                 path = self.movement_swarm(path, current_point)
                 ant.solution = Solution(self.problem.domain, path)
@@ -57,7 +51,8 @@ class AntGroup(Swarm, Behavior):
             # Actualizar el mejor camino
             if min(list(evals.values())) < best_path_eval:
                 best_path = paths[np.argmin(list(evals.values()))]
-                self.problem.solution = Solution(self.problem.domain, best_path)
+                self.problem.solution = Solution(
+                    self.problem.domain, best_path)
                 best_path_eval = min(evals)
                 print('Best path:', best_path, 'with cost:', best_path_eval)
 
@@ -69,10 +64,8 @@ class AntGroup(Swarm, Behavior):
                     observer.update(evals)
         return best_path
 
-    @abstractmethod
-    def update_swarm(self):
+    def get_best_solution(self):
         pass
 
-    @abstractmethod
-    def movement_swarm(self, path, current_point):
+    def get_description(self):
         pass

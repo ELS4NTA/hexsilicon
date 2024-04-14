@@ -1,7 +1,9 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from hexsilicon.presentation.history import History
-from hexsilicon.presentation.graphic import Graphic
+
+from hexsilicon.presentation.execution.administration.graphic import Graphic
+from hexsilicon.presentation.execution.administration.history import History
+
 
 class Information(ttk.Frame):
 
@@ -12,7 +14,6 @@ class Information(ttk.Frame):
 
     def create_widgets(self):
 
-
         self.history_frame = ttk.Labelframe(self, text="Historial")
         self.history = History(self.history_frame)
         self.history.pack(side=TOP)
@@ -22,4 +23,3 @@ class Information(ttk.Frame):
         self.graphic = Graphic(self.graphic_frame)
         self.graphic.pack(side=TOP)
         self.graphic_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=100)
-

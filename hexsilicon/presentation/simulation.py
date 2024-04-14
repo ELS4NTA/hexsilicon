@@ -1,7 +1,7 @@
 import configure_simulation
-import execution
-import hyperparameters
 import ttkbootstrap as ttk
+from hexsilicon.presentation.execution import Execution
+
 
 class Simulation(ttk.Window):
     def __init__(self):
@@ -21,8 +21,8 @@ class Simulation(ttk.Window):
         self.resizable(False, False)
 
     def create_widgets(self):
-        self.simulation = configure_simulation.SimulationConfigure(master=self, swarms=Swarms(), algorithms=Swarms(), problems=Problems())
-
+        self.simulation = configure_simulation.SimulationConfigure(
+            master=self, swarms=Swarms(), algorithms=Swarms(), problems=Problems())
 
     def start_simulation(self):
         self.problem = self.simulation.get_problem()
@@ -31,9 +31,12 @@ class Simulation(ttk.Window):
         for widget in self.winfo_children():
             widget.destroy()
         self.title("Ejecución de la Simulación")
-        self.execution = execution.Execution(master=self, algorithm=self.algorithm, problem=self.problem)
+        self.execution = Execution(
+            master=self, algorithm=self.algorithm, problem=self.problem)
 
 # De donde salen los problemas?
+
+
 class Problems:
     def get_problems(self):
         return ["Problema 1", "Problema 2", "Problema 3"]
@@ -43,9 +46,11 @@ class Problems:
                 "for a salesperson to take, given a starting point, a number of cities (nodes), and optionally an "
                 "ending point")
 
+
 class Swarms:
     def get_swarms(self):
         return ["Enjambre 1", "Enjambre 2", "Enjambre 3"]
+
     def get_algorithms(self):
         return ["SACO", "Algoritmo 2", "Algoritmo 3"]
 
@@ -54,7 +59,4 @@ class Swarms:
 
     def get_swarm_description(self, swarm):
         return "Enjambre de partículas"
-    
-if __name__ == "__main__":
-    app = Simulation()
-    app.mainloop()
+

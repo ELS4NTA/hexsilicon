@@ -1,12 +1,14 @@
-import ttkbootstrap as ttk
 import tkinter as tk
 from tkinter import filedialog
-import pandas as pd
 
-from hexsilicon.domain.problem.problem import Problem
-from hexsilicon.domain.problem.problems.MinPathFunction import MinPathFunction
-from hexsilicon.domain.problem.restriction import Restriction
+import pandas as pd
+import ttkbootstrap as ttk
+
 from hexsilicon.domain.problem.domain import Domain
+from hexsilicon.domain.problem.minimalpath.MinPathFunction import \
+    MinPathFunction
+from hexsilicon.domain.problem.problem import Problem
+from hexsilicon.domain.problem.restriction import Restriction
 
 
 class SimulationConfigure(ttk.Frame):
@@ -22,48 +24,61 @@ class SimulationConfigure(ttk.Frame):
 
     def create_widgets(self):
         # Title
-        self.simulation_title = ttk.Label(self, text="Configuración Inicial", font=("Arial Bold", 20))
+        self.simulation_title = ttk.Label(
+            self, text="Configuración Inicial", font=("Arial Bold", 20))
 
         # Swarm selection
         self.swarm_frame = ttk.Labelframe(self, text="Enjambre")
         if self.swarms is not None:
             self.swarm_combobox = ttk.Combobox(
                 self.swarm_frame, values=self.swarms.get_swarms())
-            self.swarm_combobox.bind("<<ComboboxSelected>>", self.update_swarm_description)
+            self.swarm_combobox.bind(
+                "<<ComboboxSelected>>", self.update_swarm_description)
 
         # Description of Swarm
         self.swarm_description_frame = ttk.Labelframe(self, border=0)
-        self.swarm_description = ttk.Label(self.swarm_description_frame, text="", wraplength=200, justify="center")
-        self.swarm_description.config(font=("Arial", 10), padding=(10, 10,), background="#99E4FE")
+        self.swarm_description = ttk.Label(
+            self.swarm_description_frame, text="", wraplength=200, justify="center")
+        self.swarm_description.config(
+            font=("Arial", 10), padding=(10, 10,), background="#99E4FE")
 
         # Algorithm selection
         self.algorithm_frame = ttk.Labelframe(self, text="Algoritmo")
         if self.algorithms is not None:
             self.algorithm_combobox = ttk.Combobox(
                 self.algorithm_frame, values=self.algorithms.get_algorithms())
-            self.algorithm_combobox.bind("<<ComboboxSelected>>", self.update_algorithm_description)
+            self.algorithm_combobox.bind(
+                "<<ComboboxSelected>>", self.update_algorithm_description)
 
         # Description of Algorithm
         self.algorithm_description_frame = ttk.Labelframe(self, border=0)
-        self.algorithm_description = ttk.Label(self.algorithm_description_frame, text="", wraplength=200, justify="center")
-        self.algorithm_description.config(font=("Arial", 10), padding=(10, 10,), background="#99E4FE")
+        self.algorithm_description = ttk.Label(
+            self.algorithm_description_frame, text="", wraplength=200, justify="center")
+        self.algorithm_description.config(
+            font=("Arial", 10), padding=(10, 10,), background="#99E4FE")
 
         # Problems selection
         self.problem_frame = ttk.Labelframe(self, text="Problemas")
         if self.problems is not None:
             self.problem_combobox = ttk.Combobox(
                 self.problem_frame, values=self.problems.get_problems())
-            self.problem_combobox.bind("<<ComboboxSelected>>", self.update_problem_description)
+            self.problem_combobox.bind(
+                "<<ComboboxSelected>>", self.update_problem_description)
 
         # Description of Problem
         self.problem_description_frame = ttk.Labelframe(self, border=0)
-        self.text_description = ttk.Label(self.problem_description_frame, text="", wraplength=200, justify="center")
-        self.text_description.config(font=("Arial", 10), padding=(10, 10,), background="#99E4FE")
+        self.text_description = ttk.Label(
+            self.problem_description_frame, text="", wraplength=200, justify="center")
+        self.text_description.config(
+            font=("Arial", 10), padding=(10, 10,), background="#99E4FE")
 
         # Select file
-        self.file_frame = ttk.Labelframe(self, text="Específicaciones del Problema")
-        self.file_button = ttk.Button(self.file_frame, text="Seleccionar", command=self.open_file)
-        self.file_name_label = ttk.Label(self.file_frame, text="", justify="center")
+        self.file_frame = ttk.Labelframe(
+            self, text="Específicaciones del Problema")
+        self.file_button = ttk.Button(
+            self.file_frame, text="Seleccionar", command=self.open_file)
+        self.file_name_label = ttk.Label(
+            self.file_frame, text="", justify="center")
 
         # Start button
         self.start_button = ttk.Button(
@@ -112,10 +127,12 @@ class SimulationConfigure(ttk.Frame):
         self.start_button.grid(row=4, column=0, columnspan=3, pady=10)
 
     def open_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt")])
+        file_path = filedialog.askopenfilename(
+            filetypes=[("Archivos de texto", "*.txt")])
         if file_path:
             file_name = file_path.split("/")[-1]
-            self.file_name_label.config(text="Archivo Seleccionado: " + file_name)
+            self.file_name_label.config(
+                text="Archivo Seleccionado: " + file_name)
             with open(file_path, "r") as file_obj:
                 content = file_obj.read()
                 self.get_problem_data(content)
@@ -130,7 +147,8 @@ class SimulationConfigure(ttk.Frame):
 
     def create_problem(self):
         # Create Restriction
-        self.restriction = Restriction({'initial_point': self.pto_ini, 'final_point': self.pto_fin})
+        self.restriction = Restriction(
+            {'initial_point': self.pto_ini, 'final_point': self.pto_fin})
         # Create dataframe
         self.data_frame = pd.DataFrame(
             {
@@ -152,7 +170,6 @@ class SimulationConfigure(ttk.Frame):
         self.create_problem()
         self.master.start_simulation()
 
-
     def update_problem_description(self, event):
         selected_problem = self.problem_combobox.get()
         description = self.problems.get_problem_description(selected_problem)
@@ -163,7 +180,8 @@ class SimulationConfigure(ttk.Frame):
 
     def update_algorithm_description(self, event):
         selected_algorithm = self.algorithm_combobox.get()
-        description = self.algorithms.get_algorithm_description(selected_algorithm)
+        description = self.algorithms.get_algorithm_description(
+            selected_algorithm)
         self.algorithm_description.config(text=description)
         self.algorithm_description.update()
         # Show the label
@@ -176,4 +194,3 @@ class SimulationConfigure(ttk.Frame):
         self.swarm_description.update()
         # Show the label
         self.swarm_description.grid()
-

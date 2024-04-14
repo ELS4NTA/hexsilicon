@@ -1,7 +1,10 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from hexsilicon.presentation.hyperparameters import Hyperparameters
-from hexsilicon.presentation.information import Information
+
+from hexsilicon.presentation.administration.hyperparameters import \
+    Hyperparameters
+from hexsilicon.presentation.execution.administration.information import \
+    Information
 
 
 class Dashboard(ttk.Notebook):
@@ -10,11 +13,11 @@ class Dashboard(ttk.Notebook):
         super().__init__(master, bootstyle="primary")
         self.info_frame = Information(self)
         self.info_frame.pack(fill=BOTH, expand=YES)
-        self.add(self.info_frame, text='Information')
+        self.add(self.info_frame, text='Información')
 
         self.hyper_frame = Hyperparameters(self)
         self.hyper_frame.pack(fill=BOTH, expand=YES)
-        self.add(self.hyper_frame, text='Hyperparams')
+        self.add(self.hyper_frame, text='Hiperparametros')
 
     def get_history_frame(self):
         return self.info_frame.history

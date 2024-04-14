@@ -1,8 +1,9 @@
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import networkx as nx
+import ttkbootstrap as ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from ttkbootstrap.constants import *
+
 from hexsilicon.presentation.observer import Observer
 
 
@@ -15,7 +16,8 @@ class Graphic(Observer, ttk.Frame):
         self.place_widgets()
 
     def create_widgets(self):
-        self.show_btn = ttk.Button(self, text="Not show", bootstyle="primary", command=self.toggle_frame)
+        self.show_btn = ttk.Button(
+            self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
         self.example_problem_plot()
 
@@ -34,7 +36,8 @@ class Graphic(Observer, ttk.Frame):
         path_edges = list(zip(path, path[1:]))
 
         edge_colors = [
-            "red" if edge in path_edges or tuple(reversed(edge)) in path_edges else "black"
+            "red" if edge in path_edges or tuple(
+                reversed(edge)) in path_edges else "black"
             for edge in G.edges()
         ]
 
@@ -53,10 +56,10 @@ class Graphic(Observer, ttk.Frame):
     def toggle_frame(self):
         if self.canvas.get_tk_widget().winfo_ismapped():
             self.canvas.get_tk_widget().pack_forget()
-            self.show_btn.config(text="Show")
+            self.show_btn.config(text="Mostrar")
         else:
             self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
-            self.show_btn.config(text="Not show")
+            self.show_btn.config(text="Ocultar")
 
     def update(self, *args, **kwargs):
         self.example_problem_plot(*args, **kwargs)

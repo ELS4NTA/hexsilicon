@@ -1,26 +1,23 @@
-from .domain import Domain
-from .function import Function
-from abc import ABC, abstractmethod
-import networkx as nx
+from abc import abstractmethod
 
 
 class Problem(object):
 
-    def __init__(self, domain: Domain, function: Function) -> None:
-        self.domain = domain
-        self.function = function
-        self.solution = None
-        self.representation = None
+    def __init__(self):
+        self.function = None
+        self.searchspace = None
 
-    def get_representation(self) -> nx.DiGraph:
-        return self.representation
+    @abstractmethod
+    def get_representation(self):
+        pass
 
-    def set_domain(self, new_domain: Domain) -> None:
-        self.domain = new_domain
+    @abstractmethod
+    def get_description(self):
+        pass
 
-    def get_domain(self) -> Domain:
-        return self.domain
+    @abstractmethod
+    def get_restrictions(self):
+        pass
 
     def call_function(self, solution) -> float:
         return self.function.evaluate(solution, self.representation)
-

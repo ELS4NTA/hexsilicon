@@ -1,14 +1,16 @@
+import pandas as pd
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from hexsilicon.presentation.dashboard import Dashboard
-from hexsilicon.presentation.control import Control
-from hexsilicon.presentation.evironment import Environment
-import hexsilicon.domain.swarm.algorithms.ACO as ACO
+
+import hexsilicon.domain.swarm.ants.SACO as SACO
+from hexsilicon.domain.problem.domain import Domain
+from hexsilicon.domain.problem.minimalpath.MinPathFunction import \
+    MinPathFunction
 from hexsilicon.domain.problem.problem import Problem
 from hexsilicon.domain.problem.restriction import Restriction
-from hexsilicon.domain.problem.domain import Domain
-import pandas as pd
-from hexsilicon.domain.problem.problems.MinPathFunction import MinPathFunction
+from hexsilicon.presentation.administration.control import Control
+from hexsilicon.presentation.administration.dashboard import Dashboard
+from hexsilicon.presentation.execution.evironment import Environment
 
 
 class Execution(ttk.Frame):
@@ -38,13 +40,15 @@ class Execution(ttk.Frame):
         padding = 10
 
         # Buttons to see problem, natual or stop execution
-        self.buttons_frame.place(x=padding, y=padding, width=window_width*0.66+padding, height=window_height*0.1)
+        self.buttons_frame.place(
+            x=padding, y=padding, width=window_width*0.66+padding, height=window_height*0.1)
         self.see_problem_button.grid(row=0, column=0, padx=10)
         self.start_execution_button.grid(row=0, column=1, padx=10)
         self.stop_execution_button.grid(row=0, column=2, padx=10)
 
         # Simulation environment
-        self.simulation_environment_frame.place(x=padding, y=padding+window_height*0.1, width=window_width*0.66+padding, height=window_height*0.5)
+        self.simulation_environment_frame.place(
+            x=padding, y=padding+window_height*0.1, width=window_width*0.66+padding, height=window_height*0.5)
         self.simulation_environment.grid(row=0, column=0)
 
     def see_problem(self):
@@ -72,18 +76,17 @@ class Execution(ttk.Frame):
         pass
 
     def set_observers(self):
-        clase = getattr(ACO, self.algorithm)
+        clase = getattr(SACO, self.algorithm)
         print(clase)
         print(type(clase))
         problem = self.example_problem()
 
-        self.instancia = ACO.SACO(problem)
+        self.instancia = SACO.SACO(problem)
         self.dashboard.set_hyperparams(self.instancia.get_hyperparams())
         history = self.dashboard.get_history_frame()
         graphic = self.dashboard.get_graphic_frame()
         self.instancia.subscribe(history)
         self.instancia.subscribe(graphic)
-
 
     def example_problem(self):
         df = pd.DataFrame({'source': [1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5],
@@ -93,5 +96,3 @@ class Execution(ttk.Frame):
         R = Restriction(dict_restrictions)
         D = Domain(df, R)
         return Problem(D, MinPathFunction())
-
-

@@ -4,14 +4,14 @@ from hexsilicon.presentation.observer import Observer
 
 class Observable(ABC):
 
-    def __init__(self):
-        self.observers = []
-
+    @abstractmethod
     def subscribe(self, observer: Observer):
-        self.observers.append(observer)
+        pass
 
+    @abstractmethod
     def unsubscribe(self, observer: Observer):
-        self.observers.remove(observer)
+        pass
 
+    @abstractmethod
     def notify(self, *args, **kwargs):
-        list(map(lambda observer: observer.update(*args, **kwargs), self.observers))
+        pass

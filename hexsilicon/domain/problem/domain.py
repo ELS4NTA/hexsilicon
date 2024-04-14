@@ -1,8 +1,8 @@
-from .restriction import Restriction
+from abc import ABC, abstractmethod
 
 
-class Domain(object):
+class Domain(ABC):
 
-    def __init__(self, space_search,  restriction: Restriction) -> None:
-        self.space = space_search
-        self.restriction = restriction
+    @abstractmethod
+    def get_domain(self):
+        pass
