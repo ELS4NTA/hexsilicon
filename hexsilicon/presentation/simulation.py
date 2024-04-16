@@ -1,7 +1,6 @@
-import configure_simulation
+from hexsilicon.presentation import configure_simulation
 import ttkbootstrap as ttk
-from hexsilicon.presentation.execution import Execution
-
+from hexsilicon.presentation.executiion import Execution
 
 class Simulation(ttk.Window):
     def __init__(self):

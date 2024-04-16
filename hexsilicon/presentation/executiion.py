@@ -2,14 +2,14 @@ import pandas as pd
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
-import hexsilicon.domain.swarm.ants.SACO as SACO
+import hexsilicon.domain.swarm.ants.saco as SACO
 from hexsilicon.domain.problem.domain import Domain
 from hexsilicon.domain.problem.minimalpath.MinPathFunction import \
     MinPathFunction
 from hexsilicon.domain.problem.problem import Problem
 from hexsilicon.domain.problem.restriction import Restriction
-from hexsilicon.presentation.administration.control import Control
-from hexsilicon.presentation.administration.dashboard import Dashboard
+from hexsilicon.presentation.execution.control import Control
+from hexsilicon.presentation.execution.dashboard import Dashboard
 from hexsilicon.presentation.execution.evironment import Environment
 
 
