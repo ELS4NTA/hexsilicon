@@ -13,59 +13,28 @@ class AntColony(Swarm):
         super().__init__()
 
     def generate_swarm(self):
-        self.population = np.array(
-            [Agent("Ant") for _ in range(self.behavior.get_hyperparams["n_agents"][0])]
-        )
+        graph = self.problem.get_representation()
+        n_agents = self.behavior.get_hyperparams["n_agents"][0]
+        pheromone_0 = self.behavior.get_hyperparams["pheromone_0"][0]
+        for edge in graph.edges(data=True):
+            edge[2]['pheromone'] = pheromone_0
+        self.population = [Agent("Ant") for _ in range(n_agents)]
 
-    def metaheuristic(self):
-        data_frame = self.problem.domain.space
-        # Inicializar feromonas
-        data_frame['pheromone'] = self.hyperparams['pheromone_0'][0]
-        print(data_frame)
-        self.problem.representation = nx.from_pandas_edgelist(
-            data_frame,
-            'source',
-            'target',
-            ['weight', 'pheromone'],
-            create_using=nx.Graph)
-
-        # Inicializar el mejor camino
-        best_path = None
-        best_path_eval = np.inf
-
-        # Por cada iteración
-        for i in range(self.hyperparams['n_iterations'][0]):
-            paths = []
-            evals = {}
-
-            # Por cada hormiga
-            for ant in self.population:
-                current_point = self.problem.domain.restriction.get_restriction()[
-                    'initial_point']
-                path = np.array([current_point])
-                path = self.movement_swarm(path, current_point)
-                ant.solution = Solution(self.problem.domain, path)
-                evals[i] = self.problem.call_function(ant.solution)
-                paths.append(path)
-
-            # Actualizar el mejor camino
-            if min(list(evals.values())) < best_path_eval:
-                best_path = paths[np.argmin(list(evals.values()))]
-                self.problem.solution = Solution(
-                    self.problem.domain, best_path)
-                best_path_eval = min(evals)
-                print('Best path:', best_path, 'with cost:', best_path_eval)
-
-            # Actualizar feromonas
-            self.update_swarm()
-
-            for observer in self.observers:
-                if observer.__class__.__name__ == 'History':
-                    observer.update(evals)
-        return best_path
+    def mataheuristic(self):
+        self.generate_swarm()
+        num_iterations = self.behavior.get_hyperparams["n_iterations"][0]
+        for i in range(num_iterations):
+            self.behavior.move_swarm(self)
+            self.behavior.update_swarm(self)
+            self.history[i] = self.best_agent.get_score()
+            self.notify(self)
 
     def get_best_solution(self):
-        pass
+        return self.best_agent.get_solution()
 
     def get_description(self):
-        pass
+        return """La metaheurística ACO se inspira en la observación 
+                  del comportamiento de colonias de hormigas reales, 
+                  que presentaban una característica interesante: 
+                  cómo encontrar los caminos más cortos entre el nido
+                  y la comida."""

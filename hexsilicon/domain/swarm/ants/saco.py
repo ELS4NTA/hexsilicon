@@ -1,13 +1,13 @@
 import numpy as np
 
+from hexsilicon.domain.problem.solution import Solution
 from hexsilicon.domain.swarm.behavior import Behavior
 
 
-# Simple Ant Colony Optimization (SACO) algorithm
+# Simple Ant Colony Optimization (SACO) algorithm or Ant System (AS) algorithm
 class SACO(Behavior):
 
-    def __init__(self, problem):
-        super().__init__(problem)
+    def __init__(self):
         self.hyperparams = {
             'rho': (0.01, 0.0, 0.2),
             'q': (1, 0, 10),
@@ -16,22 +16,34 @@ class SACO(Behavior):
             'n_iterations': (20, 1, 1000)
         }
 
-    def move_swarm(self, path, current_point):
-        while self.problem.domain.restriction.get_restriction()['final_point'] != current_point:
-            next_nodes = list(
-                self.problem.get_representation().neighbors(current_point))
-            probabilities = np.zeros(len(next_nodes))
-            for i, next in enumerate(next_nodes):
-                probabilities[i] = self.problem.get_representation().get_edge_data(current_point, next)[
-                    'pheromone'] / self.problem.get_representation().get_edge_data(current_point, next)['weight']
-            probabilities = np.divide(probabilities, np.sum(probabilities))
-            next_point = np.random.choice(next_nodes, p=probabilities)
-            path = np.append(path, next_point)
-            current_point = next_point
-        return path
+    def move_swarm(self, swarm):
+        graph = swarm.problem.get_representation()
+        restrictions = swarm.problem.get_restriction()
+        start_node = restrictions['initial_point']
+        end_node = restrictions['final_point']
+        rng = np.random.default_rng(seed=42)
+        best_score = np.inf
+        for ant in swarm.population:
+            current_node = start_node
+            path = [current_node]
+            while current_node != end_node:
+                next_nodes = list(graph.neighbors(current_node))
+                probabilities = np.zeros(len(next_nodes))
+                for i, next_node in enumerate(next_nodes):
+                    probabilities[i] = graph.get_edge_data(current_node, next_node)['pheromone'] \
+                                    / graph.get_edge_data(current_node, next_node)['weight']
+                probabilities = np.divide(probabilities, np.sum(probabilities))
+                next_node = rng.choice(next_nodes, p=probabilities)
+                path.append(next_node)
+                current_node = next_node
+            ant.solution = Solution(representation=path)
+            score = self.problem.call_function(ant.solution)
+            if score < best_score:
+                best_score = score
+                swarm.best_agent = ant
 
-    def update_swarm(self):
-        graph = self.problem.get_representation()
+    def update_swarm(self, swarm):
+        graph = swarm.problem.get_representation()
         for edge in graph.edges(data=True):
             edge[2]['pheromone'] *= (1 - self.hyperparams['rho'][0])
             edge[2]['pheromone'] += self.hyperparams['q'][0]

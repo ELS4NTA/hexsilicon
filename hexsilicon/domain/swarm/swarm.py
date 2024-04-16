@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+from hexsilicon.domain.problem.problem import Problem
 from hexsilicon.domain.swarm.observable import Observable
 from hexsilicon.presentation.observer import Observer
 
@@ -9,7 +10,8 @@ class Swarm(Observable):
     def __init__(self):
         self.history = {}
         self.description = ""
-        self.problem = None
+        self.problem = Problem()
+        self.best_agent = None
         self.behavior = None
         self.population = []
         self.observers = []
@@ -23,7 +25,7 @@ class Swarm(Observable):
         pass
 
     @abstractmethod
-    def get_best_solution(self):
+    def get_best_agent(self):
         pass
 
     @abstractmethod

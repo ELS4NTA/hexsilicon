@@ -7,6 +7,8 @@ class Agent(object):
         self.solution = None
         self.name = name
 
-    def get_position(self):
-        # TODO: Implementar
-        pass
+    def get_score(self):
+        return self.solution.get_score()
+    
+    def get_solution(self):
+        return self.solution
