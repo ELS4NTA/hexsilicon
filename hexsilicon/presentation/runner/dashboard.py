@@ -1,9 +1,9 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
-from hexsilicon.presentation.execution.administration.hyperparameters import \
+from hexsilicon.presentation.runner.administration.hyperparameters import \
     Hyperparameters
-from hexsilicon.presentation.execution.administration.information import \
+from hexsilicon.presentation.runner.administration.information import \
     Information
 
 

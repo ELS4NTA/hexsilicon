@@ -8,9 +8,9 @@ from hexsilicon.domain.problem.minimalpath.MinPathFunction import \
     MinPathFunction
 from hexsilicon.domain.problem.problem import Problem
 from hexsilicon.domain.problem.restriction import Restriction
-from hexsilicon.presentation.execution.control import Control
-from hexsilicon.presentation.execution.dashboard import Dashboard
-from hexsilicon.presentation.execution.evironment import Environment
+from hexsilicon.presentation.runner.control import Control
+from hexsilicon.presentation.runner.dashboard import Dashboard
+from hexsilicon.presentation.runner.evironment import Environment
 
 
 class Execution(ttk.Frame):
@@ -39,7 +39,7 @@ class Execution(ttk.Frame):
         window_height = int(geometry.split("x")[1].split("+")[0])
         padding = 10
 
-        # Buttons to see problem, natual or stop execution
+        # Buttons to see problem, natual or stop runner
         self.buttons_frame.place(
             x=padding, y=padding, width=window_width*0.66+padding, height=window_height*0.1)
         self.see_problem_button.grid(row=0, column=0, padx=10)
