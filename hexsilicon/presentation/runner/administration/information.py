@@ -1,8 +1,8 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
-from hexsilicon.presentation.execution.administration.graphic import Graphic
-from hexsilicon.presentation.execution.administration.history import History
+from hexsilicon.presentation.runner.administration.graphic import Graphic
+from hexsilicon.presentation.runner.administration.history import History
 
 
 class Information(ttk.Frame):
