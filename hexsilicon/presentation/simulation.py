@@ -1,6 +1,8 @@
-from hexsilicon.presentation import configure_simulation
 import ttkbootstrap as ttk
+
+from hexsilicon.presentation import configure_simulation
 from hexsilicon.presentation.executiion import Execution
+
 
 class Simulation(ttk.Window):
     def __init__(self):
@@ -21,41 +23,53 @@ class Simulation(ttk.Window):
 
     def create_widgets(self):
         self.simulation = configure_simulation.SimulationConfigure(
-            master=self, swarms=Swarms(), algorithms=Swarms(), problems=Problems())
+            master=self, swarms_algorithm=self.get_swarm_algorithm(), algorithms_problems=self.get_algorithm_problem(), description=self.get_description())
 
-    def start_simulation(self):
-        self.problem = self.simulation.get_problem()
-        self.algorithm = "SACO"
-        print(self.problem.get_domain())
+    def start_simulation(self, swarm, algorithm, problem, context):
         for widget in self.winfo_children():
             widget.destroy()
         self.title("Ejecución de la Simulación")
-        self.execution = Execution(
-            master=self, algorithm=self.algorithm, problem=self.problem)
+        #self.execution = Execution(
+         #   master=self, swarm=swarm, algorithm=algorithm, problem=problem, context=context)
 
-# De donde salen los problemas?
+    def get_swarm_algorithm(self):
+        return {
+            "Colonia de Hormigas": ["SACO", "MAXMIN"],
+            "Bandada de aves": ["PSO", "APSO"]
+        }
 
+    def get_algorithm_problem(self):
+        return {
+            "SACO": ["TSP", "MIN"],
+            "MAXMIN": ["TSP", "QAP"],
+            "PSO": ["TSP", "QAP"],
+            "APSO": ["TSP", "QAP"]
+        }
 
-class Problems:
-    def get_problems(self):
-        return ["Problema 1", "Problema 2", "Problema 3"]
-
-    def get_problem_description(self, problem):
-        return ("The Traveling Salesman Problem (TSP) is the challenge of finding the shortest path or shortest route "
-                "for a salesperson to take, given a starting point, a number of cities (nodes), and optionally an "
-                "ending point")
-
-
-class Swarms:
-    def get_swarms(self):
-        return ["Enjambre 1", "Enjambre 2", "Enjambre 3"]
-
-    def get_algorithms(self):
-        return ["SACO", "Algoritmo 2", "Algoritmo 3"]
-
-    def get_algorithm_description(self, algorithm):
-        return "Algoritmo de enjambre de partículas"
-
-    def get_swarm_description(self, swarm):
-        return "Enjambre de partículas"
-
+    def get_description(self):
+        return {
+            "Colonia de Hormigas": "La metaheurística ACO se inspira en la observación del comportamiento de colonias "
+                                   "de hormigas reales, cómo encontrar los caminos más cortos entre el nidos y la "
+                                   "comida.",
+            "Bandada de aves": "Algoritmo de bandada de pájaros",
+            "SACO": "Algoritmo mas simple de colonia de hormigas",
+            "MAXMIN": "Algoritmo de colonia de hormigas con feromonas MAX-MIN",
+            "PSO": "Optimización por enjambre de partículas",
+            "APSO": "Optimización por enjambre de partículas adaptativo",
+            "TSP": "Problema del vendedor viajero",
+            "MIN": "Problema de encontrar el camino más corto",
+            "QAP": "Problema de asignación cuadrática"
+        }
+    
+    def get_name_class(self):
+        return {
+            "Colonia de Hormigas": "AntColony",
+            "Bandada de aves": "PSO",
+            "SACO": "SACO",
+            "MAXMIN": "ACO",
+            "PSO": "PSO",
+            "APSO": "PSO",
+            "TSP": "TSP",
+            "MIN": "MIN",
+            "QAP": "QAP"
+        }
