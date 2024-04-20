@@ -8,8 +8,8 @@ from hexsilicon.swarms.swarm import Swarm
 
 class AntColony(Swarm):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, behavior=None):
+        super().__init__(behavior)
         self.pheromone_matrix = None
         self.weights_matrix = None
 
@@ -53,9 +53,13 @@ class AntColony(Swarm):
     def get_best_agent(self):
         return self.best_agent.get_solution()
 
-    def get_description(self):
-        return """La metaheurística ACO se inspira en la observación 
-                  del comportamiento de colonias de hormigas reales, 
-                  que presentaban una característica interesante: 
-                  cómo encontrar los caminos más cortos entre el nido
-                  y la comida."""
+    @staticmethod
+    def get_description():
+        return {
+            "name": "Colonia de Hormigas",
+            "description": "La metaheurística ACO se inspira en la observación del comportamiento de colonias de "
+                           "hormigas reales, que presentaban una característica interesante: cómo encontrar los "
+                           "caminos más cortos entre el nido y la comida.",
+            "behavior": "AntBehavior",
+            "class_name": "AntColony"
+        }

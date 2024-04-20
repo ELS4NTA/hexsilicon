@@ -1,13 +1,12 @@
-from hexsilicon.swarms.behavior import Behavior
+from hexsilicon.swarms.ants.antbehavior import AntBehavior
 
 
 # Simple Ant Colony Optimization (SACO) algorithm or Simple Ant System (AS) algorithm
-class SACO(Behavior):
+class SACO(AntBehavior):
 
-    def __init__(self):
+    def __init__(self, swarm=None):
+        super().__init__(swarm)
         self.hyperparams = {
-            'n_iterations': (20, 1, 1000),
-            'n_agents': (7, 1, 100),
             'pheromone_0': (1, 0, 1),
             'rho': (0.01, 0.0, 0.2),
             'alpha': (1, 0, 10),
@@ -35,4 +34,13 @@ class SACO(Behavior):
             'q': 'Cantidad de feromonas depositadas por la hormiga',
             'alpha': 'Peso de la feromona',
             'beta': 'Peso de la distancia'
+        }
+
+    @staticmethod
+    def get_description():
+        return {
+            "name": "SACO",
+            "description": "Es el algoritmo más simple de la familia de las colonias de hormigas. Tieniendo en cuenta "
+                           "solo la feromona en los caminos",
+            "class_name": "SACO",
         }

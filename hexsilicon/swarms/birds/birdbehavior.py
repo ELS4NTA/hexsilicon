@@ -1,13 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from hexsilicon.swarms.behavior import Behavior
 
 
-class Behavior(ABC):
+class BirdBehavior(Behavior):
 
-    @abstractmethod
     def move_swarm(self, swarm):
         pass
 
-    @abstractmethod
     def update_swarm(self, swarm):
         pass
 
@@ -16,10 +16,8 @@ class Behavior(ABC):
     def get_description():
         pass
 
-    @abstractmethod
     def get_hyperparams(self):
         pass
 
-    @abstractmethod
     def get_hyperparams_description(self):
         pass

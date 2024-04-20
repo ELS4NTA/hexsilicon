@@ -3,7 +3,7 @@ import ttkbootstrap as ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from ttkbootstrap.constants import *
 
-from hexsilicon.presentation.observer import Observer
+from hexsilicon.presentation.runner.observer import Observer
 
 
 class History(Observer, ttk.Frame):

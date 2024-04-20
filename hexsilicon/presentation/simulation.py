@@ -1,13 +1,25 @@
-import ttkbootstrap as ttk
+import importlib
+import pkgutil
 
-from hexsilicon.presentation import configure_simulation
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
+
+from hexsilicon.presentation.configure_simulation import SimulationConfigure
 from hexsilicon.presentation.execution import Execution
 
 
 class Simulation(ttk.Window):
+
     def __init__(self):
         super().__init__()
         self.title("Configuración de la Simulación")
+        self.modules = self.load_modules("hexsilicon.swarms")
+        self.configuration = None
+        self.execution = None
+        self.swarm = None
+        self.algorithm = None
+        self.problem = None
+        self.context = None
         self.configure_window()
         self.create_widgets()
 
@@ -22,21 +34,55 @@ class Simulation(ttk.Window):
         self.resizable(False, False)
 
     def create_widgets(self):
-        self.simulation = configure_simulation.SimulationConfigure(
-            master=self, swarms_algorithm=self.get_swarm_algorithm(), algorithms_problems=self.get_algorithm_problem(),
-            description=self.get_description())
+        self.configuration = SimulationConfigure(master=self, algorithms_problems=self.get_algorithm_problem())
+        self.configuration.pack()
 
     def start_simulation(self, swarm, algorithm, problem, context):
-        for widget in self.winfo_children():
-            widget.destroy()
+        self.configuration.pack_forget() if self.configuration.winfo_ismapped() else None
         self.title("Ejecución de la Simulación")
-        self.execution = Execution(master=self, swarm=swarm, algorithm=algorithm, problem=problem, context=context)
+        self.swarm = swarm
+        self.algorithm = algorithm
+        self.problem = problem
+        self.context = context
+        self.instance_for_execution()
+        self.execution = Execution(master=self, hyperparams=self.swarm.get_hyperparams())
+        self.execution.pack(expand=YES, fill=BOTH)
 
-    def get_swarm_algorithm(self):
-        return {
-            "Colonia de Hormigas": ["SACO", "MAXMIN"],
-            "Bandada de aves": ["PSO", "APSO"]
-        }
+    def load_modules(self, package):
+        if isinstance(package, str):
+            package = importlib.import_module(package)
+        submodules = []
+        for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + '.'):
+            # Cargar el módulo (o submódulo)
+            module = importlib.import_module(module_name)
+            if is_pkg:
+                # Si es un paquete, recursivamente cargar submódulos
+                submodules.extend(self.load_modules(module))
+            else:
+                # Si no es un paquete, añadir a la lista de submódulos
+                submodules.append(module)
+        return submodules
+
+    def get_descriptions(self, class_name):
+        clz = self.get_class(class_name)
+        descriptions = [subclass.get_description() for subclass in clz.__subclasses__()]
+        return descriptions
+
+    def get_class(self, class_name):
+        clz = next((getattr(module, class_name) for module in self.modules if hasattr(module, class_name)), None)
+        return clz
+
+    def restore_configuration(self):
+        self.execution.pack_forget() if self.execution.winfo_ismapped() else None
+        self.title("Configuración de la Simulación")
+        self.configuration.pack()
+
+    def instance_for_execution(self):
+        swarm_class = self.get_class(self.swarm)
+        algorithm_class = self.get_class(self.algorithm)
+        self.swarm = swarm_class(algorithm_class)
+        # problem_class = self.get_class(self.problem)
+        # context_class = self.get_class(self.context)
 
     def get_algorithm_problem(self):
         return {
@@ -44,21 +90,6 @@ class Simulation(ttk.Window):
             "MAXMIN": ["TSP", "QAP"],
             "PSO": ["TSP", "QAP"],
             "APSO": ["TSP", "QAP"]
-        }
-
-    def get_description(self):
-        return {
-            "Colonia de Hormigas": "La metaheurística ACO se inspira en la observación del comportamiento de colonias "
-                                   "de hormigas reales, cómo encontrar los caminos más cortos entre el nidos y la "
-                                   "comida.",
-            "Bandada de aves": "Algoritmo de bandada de pájaros",
-            "SACO": "Algoritmo mas simple de colonia de hormigas",
-            "MAXMIN": "Algoritmo de colonia de hormigas con feromonas MAX-MIN",
-            "PSO": "Optimización por enjambre de partículas",
-            "APSO": "Optimización por enjambre de partículas adaptativo",
-            "TSP": "Problema del vendedor viajero",
-            "MIN": "Problema de encontrar el camino más corto",
-            "QAP": "Problema de asignación cuadrática"
         }
 
     def get_name_class(self):

@@ -1,18 +1,22 @@
 from abc import abstractmethod
 
-from hexsilicon.presentation.observer import Observer
+from hexsilicon.presentation.runner.observer import Observer
 from hexsilicon.problems.problem import Problem
 from hexsilicon.swarms.observable import Observable
 
 
 class Swarm(Observable):
 
-    def __init__(self):
+    def __init__(self, behavior=None):
+        self.hyperparams = {
+            'n_agents': (10, 1, 100)
+        }
         self.history = {}
         self.description = ""
+        self.behavior = behavior(self)
+        print(behavior)
         self.problem = Problem()
         self.best_agent = None
-        self.behavior = None
         self.population = []
         self.observers = []
 
@@ -28,9 +32,13 @@ class Swarm(Observable):
     def get_best_agent(self):
         pass
 
+    @staticmethod
     @abstractmethod
-    def get_description(self):
+    def get_description():
         pass
+
+    def get_hyperparams(self):
+        return self.hyperparams | self.behavior.get_hyperparams()
 
     def subscribe(self, observer: Observer):
         self.observers.append(observer)

@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
-from hexsilicon.presentation.observer import Observer
+from hexsilicon.presentation.runner.observer import Observer
 
 
 class Environment(Observer, ttk.Labelframe):

@@ -4,17 +4,18 @@ from ttkbootstrap.constants import *
 
 class Hyperparameters(ttk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, hyperparams=None):
         super().__init__(master)
         self.master = master
         self.create_widgets()
         self.place_widgets()
+        self.set_hyperparams(hyperparams)
 
     def create_widgets(self):
         self.hyperparameters_frame = ttk.Labelframe(self, text="Hiperparámetros")
 
         self.btn_group = ttk.Frame(self)
-        self.reset_btn = ttk.Button(self.btn_group, text="Reinicair", bootstyle="primary")
+        self.reset_btn = ttk.Button(self.btn_group, text="Reiniciar", bootstyle="primary")
         self.update_btn = ttk.Button(self.btn_group, text="Actualizar", bootstyle="secondary")
         self.reset_btn.pack(side=LEFT, expand=YES, ipady=5, ipadx=15)
         self.update_btn.pack(side=LEFT, expand=YES, ipady=5, ipadx=15)

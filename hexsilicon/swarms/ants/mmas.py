@@ -1,13 +1,12 @@
-from hexsilicon.swarms.behavior import Behavior
+from hexsilicon.swarms.ants.antbehavior import AntBehavior
 
 
 # Max-Min Ant System (MMAS) algorithm
-class MMAS(Behavior):
+class MMAS(AntBehavior):
 
-    def __init__(self):
-        self.hyperparams = {
-            'n_iterations': (20, 1, 1000),
-            'n_agents': (7, 1, 100),
+    def __init__(self, swarm=None):
+        super().__init__(swarm)
+        self.hyperparams = self.hyperparams | {
             'pheromone_0': (1, 0, 1),
             'rho': (0.01, 0.0, 0.2),
             'alpha': (1, 0, 10),
@@ -19,12 +18,12 @@ class MMAS(Behavior):
 
     def move_swarm(self, swarm):
         # por cada hormiga
-            # preguntar el punto inicial al problema por restricicones... (eso lo hace el problema)
-            # validar restricciones para construir camino, si puedo seguir, agregar nodo al camino
+        # preguntar el punto inicial al problema por restricicones... (eso lo hace el problema)
+        # validar restricciones para construir camino, si puedo seguir, agregar nodo al camino
 
-            # agrego la soluciona a la hormiga
-            # evaluo solo los caminos que cumplen con las restricciones, los que no cumplen se les asigna un valor alto o bajo
-        
+        # agrego la soluciona a la hormiga
+        # evaluo solo los caminos que cumplen con las restricciones, los que no cumplen se les asigna un valor alto o bajo
+
         # se le pregunta al problema que optimizacion se hace min o max luego actualizo la mejor solucion
         pass
 
@@ -40,7 +39,7 @@ class MMAS(Behavior):
             net[i[0]][i[1]]['pheromone'] = ph_max
         elif new_ph < ph_min:
             net[i[0]][i[1]]['pheromone'] = ph_min
-        else:    
+        else:
             net[i[0]][i[1]]['pheromone'] = new_ph
 
         for edge in graph.edges(data=True):
@@ -61,4 +60,10 @@ class MMAS(Behavior):
             'beta': 'Peso de la distancia'
         }
 
-    
+    @staticmethod
+    def get_description():
+        return {
+            "name": "MMAS",
+            "description": "El algoritmo Max-Min Ant System es una mejora del ACO que garantiza la convergencia del algoritmo.",
+            "class_name": "MMAS"
+        }

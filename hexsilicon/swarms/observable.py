@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from hexsilicon.presentation.observer import Observer
+from hexsilicon.presentation.runner.observer import Observer
 
 
 class Observable(ABC):

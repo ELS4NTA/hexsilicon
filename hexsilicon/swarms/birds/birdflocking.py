@@ -15,5 +15,11 @@ class BirdFlocking(Swarm):
     def get_best_solution(self):
         pass
 
-    def get_description(self):
-        pass
+    @staticmethod
+    def get_description():
+        return {
+            "name": "Bandada de Aves",
+            "description": "Este algoritmo se basa en el comportamiento de las aves en bandadas.",
+            "behavior": "BirdBehavior",
+            "class_name": "BirdFlocking"
+        }
