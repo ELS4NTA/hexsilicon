@@ -1,6 +1,3 @@
-from hexsilicon.domain.problem.solution import Solution
-
-
 class Agent(object):
 
     def __init__(self, name=""):
@@ -9,6 +6,6 @@ class Agent(object):
 
     def get_score(self):
         return self.solution.get_score()
-    
+
     def get_solution(self):
         return self.solution

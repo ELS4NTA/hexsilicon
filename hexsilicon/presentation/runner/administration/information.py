@@ -13,7 +13,6 @@ class Information(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-
         self.history_frame = ttk.Labelframe(self, text="Historial")
         self.history = History(self.history_frame)
         self.history.pack(side=TOP)

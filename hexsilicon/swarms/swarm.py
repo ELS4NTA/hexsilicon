@@ -1,8 +1,8 @@
 from abc import abstractmethod
 
-from hexsilicon.domain.problem.problem import Problem
-from hexsilicon.domain.swarm.observable import Observable
 from hexsilicon.presentation.observer import Observer
+from hexsilicon.problems.problem import Problem
+from hexsilicon.swarms.observable import Observable
 
 
 class Swarm(Observable):

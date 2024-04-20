@@ -1,7 +1,7 @@
-import tkinter as tk
 from tkinter import filedialog
 
 import ttkbootstrap as ttk
+
 
 class SimulationConfigure(ttk.Frame):
     def __init__(self, master=None, swarms_algorithm=None, algorithms_problems=None, description=None):
@@ -110,7 +110,7 @@ class SimulationConfigure(ttk.Frame):
         # hide the label
         self.text_description.grid_remove()
 
-        # Select file problem
+        # Select file problems
         self.file_frame.grid(row=3, column=2, padx=10)
         self.file_button.grid(row=0, column=0, padx=5, pady=5)
         self.file_name_label.grid(row=1, column=0, padx=5, pady=5)
@@ -127,9 +127,10 @@ class SimulationConfigure(ttk.Frame):
                 text="Archivo Seleccionado: " + file_name)
             with open(file_path, "r") as file_obj:
                 self.content = file_obj.read()
-                
+
     def start_simulation(self):
-        self.master.start_simulation(self.swarm_combobox.get(), self.algorithm_combobox.get(), self.problem_combobox.get(), self.content)
+        self.master.start_simulation(self.swarm_combobox.get(), self.algorithm_combobox.get(),
+                                     self.problem_combobox.get(), self.content)
 
     def update_problem_description(self, *args):
         description = self.description[self.problem_combobox.get()]

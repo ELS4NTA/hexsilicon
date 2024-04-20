@@ -1,4 +1,4 @@
-from hexsilicon.domain.problem.problem import Problem
+from hexsilicon.problems.problem import Problem
 
 
 class MinPath(Problem):

@@ -1,4 +1,4 @@
-from hexsilicon.domain.swarm.swarm import Swarm
+from hexsilicon.swarms.swarm import Swarm
 
 
 class BirdFlocking(Swarm):

@@ -1,4 +1,4 @@
-from hexsilicon.domain.problem.searchspace import SearchSpace
+from hexsilicon.problems.searchspace import SearchSpace
 
 
 class MinPathSearchSpace(SearchSpace):

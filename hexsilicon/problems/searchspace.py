@@ -1,6 +1,3 @@
-from abc import ABC
-
-
 class SearchSpace(object):
 
     def __init__(self):

@@ -1,10 +1,8 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
-from hexsilicon.presentation.runner.administration.hyperparameters import \
-    Hyperparameters
-from hexsilicon.presentation.runner.administration.information import \
-    Information
+from hexsilicon.presentation.runner.administration.hyperparameters import Hyperparameters
+from hexsilicon.presentation.runner.administration.information import Information
 
 
 class Dashboard(ttk.Notebook):

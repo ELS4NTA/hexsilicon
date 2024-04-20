@@ -1,4 +1,4 @@
-from hexsilicon.domain.swarm.behavior import Behavior
+from hexsilicon.swarms.behavior import Behavior
 
 
 class PSO(Behavior):

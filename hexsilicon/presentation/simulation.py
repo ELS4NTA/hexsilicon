@@ -23,14 +23,14 @@ class Simulation(ttk.Window):
 
     def create_widgets(self):
         self.simulation = configure_simulation.SimulationConfigure(
-            master=self, swarms_algorithm=self.get_swarm_algorithm(), algorithms_problems=self.get_algorithm_problem(), description=self.get_description())
+            master=self, swarms_algorithm=self.get_swarm_algorithm(), algorithms_problems=self.get_algorithm_problem(),
+            description=self.get_description())
 
     def start_simulation(self, swarm, algorithm, problem, context):
         for widget in self.winfo_children():
             widget.destroy()
         self.title("Ejecución de la Simulación")
-        #self.execution = Execution(
-         #   master=self, swarm=swarm, algorithm=algorithm, problem=problem, context=context)
+        self.execution = Execution(master=self, swarm=swarm, algorithm=algorithm, problem=problem, context=context)
 
     def get_swarm_algorithm(self):
         return {
@@ -60,7 +60,7 @@ class Simulation(ttk.Window):
             "MIN": "Problema de encontrar el camino más corto",
             "QAP": "Problema de asignación cuadrática"
         }
-    
+
     def get_name_class(self):
         return {
             "Colonia de Hormigas": "AntColony",

@@ -1,9 +1,9 @@
 import networkx as nx
 import numpy as np
 
-from hexsilicon.domain.problem.solution import Solution
-from hexsilicon.domain.swarm.agent import Agent
-from hexsilicon.domain.swarm.swarm import Swarm
+from hexsilicon.problems.solution import Solution
+from hexsilicon.swarms.agent import Agent
+from hexsilicon.swarms.swarm import Swarm
 
 
 class AntColony(Swarm):
@@ -42,7 +42,7 @@ class AntColony(Swarm):
                 probabilities = np.zeros(len(next_nodes))
                 for i, next_node in enumerate(next_nodes):
                     probabilities[i] = self.pheromone_matrix[current_node][next_node] ** alpha \
-                            * (1 / self.weights_matrix[current_node][next_node]) ** beta
+                                       * (1 / self.weights_matrix[current_node][next_node]) ** beta
                 probabilities = np.divide(probabilities, np.sum(probabilities))
                 next_node = rng.choice(next_nodes, p=probabilities)
                 path.append(next_node)

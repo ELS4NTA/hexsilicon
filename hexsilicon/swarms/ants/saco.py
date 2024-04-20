@@ -1,7 +1,4 @@
-import numpy as np
-
-from hexsilicon.domain.problem.solution import Solution
-from hexsilicon.domain.swarm.behavior import Behavior
+from hexsilicon.swarms.behavior import Behavior
 
 
 # Simple Ant Colony Optimization (SACO) algorithm or Simple Ant System (AS) algorithm
