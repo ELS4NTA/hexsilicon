@@ -9,12 +9,16 @@ class Swarm(Observable):
 
     def __init__(self, behavior=None):
         self.hyperparams = {
-            'n_agents': (10, 1, 100)
+            'n_agents': {
+                "name": "Agentes",
+                "value": 10,
+                "range": (1, 100),
+                "description": "Cantidad de agentes en el enjambre"
+            }
         }
         self.history = {}
         self.description = ""
         self.behavior = behavior(self)
-        print(behavior)
         self.problem = Problem()
         self.best_agent = None
         self.population = []

@@ -4,10 +4,15 @@ from hexsilicon.swarms.behavior import Behavior
 class AntBehavior(Behavior):
 
     def __init__(self, swarm=None):
-        self.swarm = swarm
         self.hyperparams = {
-            'n_iterations': (20, 1, 1000),
+            'n_iterations': {
+                "name": "Iteraciones",
+                "value": 20,
+                "range": (1, 1000),
+                "description": "Cantidad de iteraciones en el enjambre"
+            }
         }
+        self.swarm = swarm
 
     def move_swarm(self, swarm):
         pass
