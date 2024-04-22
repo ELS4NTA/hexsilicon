@@ -5,15 +5,15 @@ import ttkbootstrap as ttk
 
 class SimulationConfigure(ttk.Frame):
 
-    def __init__(self, master=None, algorithms_problems=None):
+    def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.swarms_descriptions = self.get_descriptions("Swarm")
+        self.problems_descriptions = self.get_descriptions("Problem")
         self.selected_swarm = None
         self.selected_algorithm = None
         self.selected_problem = None
         self.content = None
-        self.algorithms_problems = algorithms_problems
         self.create_widgets()
         self.place_widgets()
 
@@ -45,9 +45,8 @@ class SimulationConfigure(ttk.Frame):
 
         # Problems selection
         self.problem_frame = ttk.Labelframe(self, text="Problemas")
-        if self.algorithms_problems is not None:
-            self.problem_combobox = ttk.Combobox(self.problem_frame)
-            self.problem_combobox.bind("<<ComboboxSelected>>", self.update_problem_description)
+        self.problem_combobox = ttk.Combobox(self.problem_frame)
+        self.problem_combobox.bind("<<ComboboxSelected>>", self.update_problem_description)
 
         # Description of Problem
         self.problem_description_frame = ttk.Labelframe(self, border=0)
@@ -116,8 +115,10 @@ class SimulationConfigure(ttk.Frame):
         self.master.start_simulation(self.selected_swarm, self.selected_algorithm, self.selected_problem, self.content)
 
     def update_problem_description(self, *args):
-        description = self.description[self.problem_combobox.get()]
+        problem_descriptions = next((problem for problem in self.problems_descriptions if problem['name'] == self.problem_combobox.get()), None)
+        description = problem_descriptions['description']
         self.text_description.config(text=description)
+        self.selected_problem = problem_descriptions['class_name']
         self.text_description.update()
         # Show the label
         self.text_description.grid()
@@ -126,13 +127,12 @@ class SimulationConfigure(ttk.Frame):
         # Reset widgets
         self.problem_combobox.set("")
         self.text_description.grid_remove()
-
-        # self.problem_combobox["values"] = self.algorithms_problems[self.algorithm_combobox.get()]
         algorithm_descriptions = next(
             (behavior for behavior in self.algoritms_descriptions if behavior['name'] == self.algorithm_combobox.get()),
             None)
         description = algorithm_descriptions['description']
         self.selected_algorithm = algorithm_descriptions['class_name']
+        self.problem_combobox["values"] = [problem['name'] for problem in self.problems_descriptions if self.algorithm_combobox.get() in problem['algorithms'].split(', ')]
         self.algorithm_description.config(text=description)
         self.algorithm_description.update()
         # Show the label
@@ -150,7 +150,6 @@ class SimulationConfigure(ttk.Frame):
         description = swarm_descriptions['description']
         self.selected_swarm = swarm_descriptions['class_name']
         self.algoritms_descriptions = self.master.get_descriptions(swarm_descriptions['behavior'])
-
         self.algorithm_combobox["values"] = [behavior["name"] for behavior in self.algoritms_descriptions]
         self.swarm_description.config(text=description)
         self.swarm_description.update()

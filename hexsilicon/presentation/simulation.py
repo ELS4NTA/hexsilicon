@@ -14,6 +14,7 @@ class Simulation(ttk.Window):
         super().__init__()
         self.title("Configuración de la Simulación")
         self.modules = self.load_modules("hexsilicon.swarms")
+        self.modules.extend(self.load_modules("hexsilicon.problems"))
         self.configuration = None
         self.execution = None
         self.swarm = None
@@ -34,7 +35,7 @@ class Simulation(ttk.Window):
         self.resizable(False, False)
 
     def create_widgets(self):
-        self.configuration = SimulationConfigure(master=self, algorithms_problems=self.get_algorithm_problem())
+        self.configuration = SimulationConfigure(master=self)
         self.configuration.pack()
 
     def start_simulation(self, swarm, algorithm, problem, context):
@@ -81,26 +82,6 @@ class Simulation(ttk.Window):
         swarm_class = self.get_class(self.swarm)
         algorithm_class = self.get_class(self.algorithm)
         self.swarm = swarm_class(algorithm_class)
-        # problem_class = self.get_class(self.problem)
+        problem_class = self.get_class(self.problem)
+        #self.problem = problem_class(self.context)
         # context_class = self.get_class(self.context)
-
-    def get_algorithm_problem(self):
-        return {
-            "SACO": ["TSP", "MIN"],
-            "MAXMIN": ["TSP", "QAP"],
-            "PSO": ["TSP", "QAP"],
-            "APSO": ["TSP", "QAP"]
-        }
-
-    def get_name_class(self):
-        return {
-            "Colonia de Hormigas": "AntColony",
-            "Bandada de aves": "PSO",
-            "SACO": "SACO",
-            "MAXMIN": "ACO",
-            "PSO": "PSO",
-            "APSO": "PSO",
-            "TSP": "TSP",
-            "MIN": "MIN",
-            "QAP": "QAP"
-        }
