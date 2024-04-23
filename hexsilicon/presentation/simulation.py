@@ -83,5 +83,5 @@ class Simulation(ttk.Window):
         algorithm_class = self.get_class(self.algorithm)
         self.swarm = swarm_class(algorithm_class)
         problem_class = self.get_class(self.problem)
-        #self.problem = problem_class(self.context)
+        self.problem = problem_class(self.context)
         # context_class = self.get_class(self.context)

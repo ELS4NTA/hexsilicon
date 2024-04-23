@@ -1,3 +1,5 @@
+from io import StringIO
+
 import pandas as pd
 import networkx as nx
 
@@ -22,7 +24,8 @@ class MinPath(Problem):
         return False
         
     def make_representation(self):
-        self.df = pd.read_csv(self.context, sep=";")
+        self.df = pd.read_csv(StringIO(self.context), sep=';')
+        self.df.columns = ['source', 'target', 'weight', 'minimization', 'initial', 'final']
         df_formatted = pd.DataFrame({
             'source': self.df['source'],
             'target': self.df['target'],
