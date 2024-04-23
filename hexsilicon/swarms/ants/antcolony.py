@@ -8,22 +8,23 @@ from hexsilicon.swarms.swarm import Swarm
 
 class AntColony(Swarm):
 
-    def __init__(self, behavior=None):
-        super().__init__(behavior)
+    def __init__(self, behavior=None, problem=None):
+        super().__init__(behavior, problem)
         self.pheromone_matrix = None
         self.weights_matrix = None
 
     def generate_swarm(self):
         graph = self.problem.get_representation()
-        n_agents = self.behavior.get_hyperparams()["n_agents"][0]
+        n_agents = self.get_hyperparams()["n_agents"]["value"]
+        # No lo da en orden :(
         self.weights_matrix = nx.to_pandas_adjacency(graph).values
         self.pheromone_matrix = np.zeros((len(graph.nodes), len(graph.nodes)))
-        self.pheromone_matrix.fill(self.behavior.get_hyperparams()["pheromone_0"][0])
+        self.pheromone_matrix.fill(self.behavior.get_hyperparams()["pheromone_0"]["value"])
         self.population = [Agent("Ant") for _ in range(n_agents)]
 
     def metaheuristic(self):
         self.generate_swarm()
-        num_iterations = self.behavior.get_hyperparams()["n_iterations"][0]
+        num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
         for i in range(num_iterations):
             self.create_solutions()
             self.behavior.update_swarm(self)
@@ -31,8 +32,8 @@ class AntColony(Swarm):
             self.notify(self)
 
     def create_solutions(self):
-        alpha = self.behavior.get_hyperparams()["alpha"][0]
-        beta = self.behavior.get_hyperparams()["beta"][0]
+        alpha = self.behavior.get_hyperparams()["alpha"]["value"]
+        beta = self.behavior.get_hyperparams()["beta"]["value"]
         rng = np.random.default_rng(seed=42)
         for ant in self.population:
             current_node = self.problem.get_random_point()
@@ -48,7 +49,8 @@ class AntColony(Swarm):
                 path.append(next_node)
                 current_node = next_node
             ant.solution = Solution(representation=path)
-            self.problem.call_function(ant.solution)
+            ant.set_score(self.problem.call_function(ant.solution))
+            print(f"solution: {ant.get_solution()} with score {ant.get_score()}")
 
     def get_best_agent(self):
         return self.best_agent.get_solution()

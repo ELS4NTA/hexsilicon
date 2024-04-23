@@ -81,7 +81,11 @@ class Simulation(ttk.Window):
     def instance_for_execution(self):
         swarm_class = self.get_class(self.swarm)
         algorithm_class = self.get_class(self.algorithm)
-        self.swarm = swarm_class(algorithm_class)
         problem_class = self.get_class(self.problem)
         self.problem = problem_class(self.context)
+        self.swarm = swarm_class(algorithm_class, self.problem)
         # context_class = self.get_class(self.context)
+        
+    def start_execution(self):
+        self.swarm.generate_swarm()
+        self.swarm.metaheuristic()

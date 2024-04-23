@@ -20,8 +20,8 @@ class MinPath(Problem):
 
     def check_restrictions(self, solution):
         if solution[0] == self.df['initial'][0] and solution[-1] == self.df['final'][0]:
-            return True
-        return False
+            return False
+        return True
         
     def make_representation(self):
         self.df = pd.read_csv(StringIO(self.context), sep=';')
@@ -34,7 +34,7 @@ class MinPath(Problem):
         return nx.from_pandas_edgelist(df_formatted, 'source', 'target', ['weight'])
     
     def get_random_point(self):
-        return self.df['initial'][0]    
+        return self.df['initial'][0].astype(int)    
         
     def get_representation(self):
         return self.representation

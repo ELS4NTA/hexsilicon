@@ -7,7 +7,7 @@ from hexsilicon.swarms.observable import Observable
 
 class Swarm(Observable):
 
-    def __init__(self, behavior=None):
+    def __init__(self, behavior=None, problem=None):
         self.hyperparams = {
             'n_agents': {
                 "name": "Agentes",
@@ -19,7 +19,7 @@ class Swarm(Observable):
         self.history = {}
         self.description = ""
         self.behavior = behavior(self)
-        self.problem = Problem()
+        self.problem = problem
         self.best_agent = None
         self.population = []
         self.observers = []

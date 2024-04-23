@@ -6,12 +6,7 @@ class SACO(AntBehavior):
 
     def __init__(self, swarm=None):
         super().__init__(swarm)
-        self.hyperparams = {
-            'pheromone_0': (1, 0, 1),
-            'rho': (0.01, 0.0, 0.2),
-            'alpha': (1, 0, 10),
-            'beta': (1, 0, 10),
-        }
+        self.set_hyperparams()
 
     def move_swarm(self, swarm):
         pass
@@ -19,21 +14,44 @@ class SACO(AntBehavior):
     def update_swarm(self, swarm):
         func = min if swarm.problem.is_minimization() else max
         swarm.best_agent = func(swarm.population, key=lambda agent: agent.get_score())
-        swarm.pheromone_matrix *= (1 - self.hyperparams['rho'][0])
-        swarm.pheromone_matrix += self.hyperparams['q'][0]
+        swarm.pheromone_matrix *= (1 - self.hyperparams['rho']["value"])
+        swarm.pheromone_matrix += self.hyperparams['q']["value"]
 
     def get_hyperparams(self):
         return self.hyperparams
-
-    def get_hyperparams_description(self):
-        return {
-            'n_iterations': 'N\u00famero de iteraciones',
-            'n_agents': 'N\u00famero de hormigas',
-            'pheromone_0': 'Feromona inicial',
-            'rho': 'Tasa de evaporación de feromonas',
-            'q': 'Cantidad de feromonas depositadas por la hormiga',
-            'alpha': 'Peso de la feromona',
-            'beta': 'Peso de la distancia'
+        
+    def set_hyperparams(self):
+        self.hyperparams = self.hyperparams | {
+            "pheromone_0": {
+                "name": "Feromona Inicial",
+                "value": 1.0,
+                "range": (0.0, 1.0),
+                "description": "Feromona inicial en cada camino"
+            },
+            "rho": {
+                "name": "Rho",
+                "value": 0.01,
+                "range": (0.0, 0.2),
+                "description": "Tasa de evaporación de feromonas"
+            },
+            "q": {
+                "name": "q",
+                "value": 1.0,
+                "range": (0.0, 1.0),
+                "description": "Valor de importancia de feromona"
+            },
+            "alpha": {
+                "name": "Alpha",
+                "value": 1.0,
+                "range": (0.0, 10.0),
+                "description": "Valor de importancia de feromona"
+            },
+            "beta": {
+                "name": "Beta",
+                "value": 1.0,
+                "range": (0.0, 10.0),
+                "description": "Valor de importancia de heuristica del problema"
+            }
         }
 
     @staticmethod

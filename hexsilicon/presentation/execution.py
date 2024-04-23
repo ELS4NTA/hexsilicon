@@ -5,6 +5,7 @@ from hexsilicon.presentation.runner.evironment import Environment
 from hexsilicon.presentation.runner.graphic import Graphic
 from hexsilicon.presentation.runner.history import History
 from hexsilicon.presentation.runner.hyperparameters import Hyperparameters
+from hexsilicon.presentation.runner.representation import Representation
 
 
 class Execution(ttk.Frame):
@@ -37,10 +38,13 @@ class Execution(ttk.Frame):
         self.dashboard_notebook = ttk.Notebook(self, bootstyle="primary")
         self.create_information()
         self.hyper_frame = Hyperparameters(self.dashboard_notebook, self.hyperparams)
+        self.representation_frame = Representation(self.dashboard_notebook)
         self.info_frame.pack(fill=BOTH, expand=YES)
         self.hyper_frame.pack(fill=BOTH, expand=YES)
+        self.representation_frame.pack(fill=BOTH, expand=YES)
         self.dashboard_notebook.add(self.info_frame, text='Información')
         self.dashboard_notebook.add(self.hyper_frame, text='Hiperparametros')
+        self.dashboard_notebook.add(self.representation_frame, text='Representación')
         self.dashboard_notebook.grid(column=1, row=0, rowspan=2, sticky=E)
 
     def create_information(self):
@@ -62,8 +66,9 @@ class Execution(ttk.Frame):
         self.master.restore_configuration()
 
     def start_execution(self):
-        self.instancia.generate_initial_swarm()
-        self.instancia.metaheuristic()
+        #self.instancia.generate_initial_swarm()
+        #self.instancia.metaheuristic()
+        self.master.start_execution()
 
     def stop_execution(self):
         pass
