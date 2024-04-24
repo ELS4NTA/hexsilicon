@@ -14,6 +14,8 @@ class SACO(AntBehavior):
     def update_swarm(self, swarm):
         func = min if swarm.problem.is_minimization() else max
         swarm.best_agent = func(swarm.population, key=lambda agent: agent.get_score())
+        print("Best agent", swarm.best_agent.get_score())
+        print("Best path", swarm.best_agent.get_solution())
         swarm.pheromone_matrix *= (1 - self.hyperparams['rho']["value"])
         swarm.pheromone_matrix += self.hyperparams['q']["value"]
 

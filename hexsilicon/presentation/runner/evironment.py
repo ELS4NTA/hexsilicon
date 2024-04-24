@@ -28,5 +28,5 @@ class Environment(Observer, ttk.Labelframe):
             self.environment_label.pack(expand=YES, fill=BOTH)
             self.show_btn.config(text="Ocultar")
 
-    def update(self, *args, **kwargs):
-        pass
+    def update(self, swarm):
+        print("Se actualiza el ambiente... PD: no hay ambiente :(")

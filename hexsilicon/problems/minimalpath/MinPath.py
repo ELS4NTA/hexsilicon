@@ -25,7 +25,7 @@ class MinPath(Problem):
         
     def make_representation(self):
         self.df = pd.read_csv(StringIO(self.context), sep=';')
-        self.df.columns = ['source', 'target', 'weight', 'minimization', 'initial', 'final']
+        self.df.columns = ['source', 'target', 'weight', 'initial', 'final', 'minimization']
         df_formatted = pd.DataFrame({
             'source': self.df['source'],
             'target': self.df['target'],
@@ -34,7 +34,7 @@ class MinPath(Problem):
         return nx.from_pandas_edgelist(df_formatted, 'source', 'target', ['weight'])
     
     def get_random_point(self):
-        return self.df['initial'][0].astype(int)    
+        return self.df['initial'][0].astype(int)
         
     def get_representation(self):
         return self.representation

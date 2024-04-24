@@ -18,7 +18,6 @@ class History(Observer, ttk.Frame):
         self.show_btn = ttk.Button(
             self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
-        self.example_function_plot()
 
     def place_widgets(self):
         pass
@@ -51,5 +50,23 @@ class History(Observer, ttk.Frame):
             self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
             self.show_btn.config(text="Ocultar")
 
-    def update(self, data):
-        print(data)
+    def update(self, swarm):
+        print("Se dibuja la historia")
+        history = swarm.history
+        fig = plt.figure(figsize=(6, 4), dpi=70)
+
+        # Graficar la función y personalizar la gráfica
+        ax = fig.add_subplot(111)
+        x = history.keys()
+        y = history.values()
+        ax.plot(x, y, label="y = x^2")
+        ax.set_xlabel("Iteración")
+        ax.set_ylabel("Costo")
+        ax.set_title("Función de costo")
+
+        # Mostrar la gráfica en el marco sin redimensionamiento
+        self.canvas = FigureCanvasTkAgg(fig, master=self)
+        self.canvas.draw()
+
+        # Configurar el Canvas para que no tenga bordes de resaltado
+        self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)

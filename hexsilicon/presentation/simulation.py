@@ -47,6 +47,9 @@ class Simulation(ttk.Window):
         self.context = context
         self.instance_for_execution()
         self.execution = Execution(master=self, hyperparams=self.swarm.get_hyperparams())
+        self.swarm.subscribe(self.execution.history)
+        self.swarm.subscribe(self.execution.graphic)
+        self.swarm.subscribe(self.execution.environment)
         self.execution.pack(expand=YES, fill=BOTH)
 
     def load_modules(self, package):

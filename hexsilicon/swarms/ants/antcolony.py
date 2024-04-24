@@ -17,19 +17,19 @@ class AntColony(Swarm):
         graph = self.problem.get_representation()
         n_agents = self.get_hyperparams()["n_agents"]["value"]
         # No lo da en orden :(
-        self.weights_matrix = nx.to_pandas_adjacency(graph).values
+        self.weights_matrix = nx.to_pandas_adjacency(graph).sort_index().sort_index(axis=1).values
         self.pheromone_matrix = np.zeros((len(graph.nodes), len(graph.nodes)))
         self.pheromone_matrix.fill(self.behavior.get_hyperparams()["pheromone_0"]["value"])
         self.population = [Agent("Ant") for _ in range(n_agents)]
 
     def metaheuristic(self):
-        self.generate_swarm()
         num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
         for i in range(num_iterations):
+            print("iteration", i)
             self.create_solutions()
             self.behavior.update_swarm(self)
             self.history[i] = self.best_agent.get_score()
-            self.notify(self)
+        self.notify(self)
 
     def create_solutions(self):
         alpha = self.behavior.get_hyperparams()["alpha"]["value"]
@@ -42,15 +42,14 @@ class AntColony(Swarm):
                 next_nodes = self.problem.get_next_nodes(current_node)
                 probabilities = np.zeros(len(next_nodes))
                 for i, next_node in enumerate(next_nodes):
-                    probabilities[i] = self.pheromone_matrix[current_node][next_node] ** alpha \
-                                       * (1 / self.weights_matrix[current_node][next_node]) ** beta
+                    probabilities[i] = self.pheromone_matrix[current_node-1][next_node-1] ** alpha \
+                                       * (1 / self.weights_matrix[current_node-1][next_node-1]) ** beta
                 probabilities = np.divide(probabilities, np.sum(probabilities))
                 next_node = rng.choice(next_nodes, p=probabilities)
                 path.append(next_node)
                 current_node = next_node
             ant.solution = Solution(representation=path)
             ant.set_score(self.problem.call_function(ant.solution))
-            print(f"solution: {ant.get_solution()} with score {ant.get_score()}")
 
     def get_best_agent(self):
         return self.best_agent.get_solution()

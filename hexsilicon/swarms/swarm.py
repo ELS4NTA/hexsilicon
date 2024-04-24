@@ -50,8 +50,10 @@ class Swarm(Observable):
     def unsubscribe(self, observer: Observer):
         self.observers.remove(observer)
 
-    def notify(self, *args, **kwargs):
-        list(map(lambda observer: observer.update(*args, **kwargs), self.observers))
+    def notify(self, swarm):
+        for observer in self.observers:
+            print("Notifying observer")
+            observer.update(swarm)
 
     def get_history(self):
         return self.history

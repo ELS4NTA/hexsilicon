@@ -19,19 +19,23 @@ class Graphic(Observer, ttk.Frame):
         self.show_btn = ttk.Button(
             self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
-        self.example_problem_plot()
 
     def place_widgets(self):
         pass
 
-    def example_problem_plot(self):
-        G = nx.Graph()
-        G.add_edges_from([(1, 2), (1, 3), (2, 3), (3, 4), (4, 5)])
+    def toggle_frame(self):
+        if self.canvas.get_tk_widget().winfo_ismapped():
+            self.canvas.get_tk_widget().pack_forget()
+            self.show_btn.config(text="Mostrar")
+        else:
+            self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
+            self.show_btn.config(text="Ocultar")
 
-        for u, v in G.edges():
-            G[u][v]['weight'] = 1
+    def update(self, swarm):
+        print("Se dibuja el grafo :>")
+        G = swarm.problem.get_representation()
 
-        path = [1, 2, 3, 4, 5]  # Ruta de ejemplo
+        path = swarm.best_agent.get_solution()
 
         path_edges = list(zip(path, path[1:]))
 
@@ -48,18 +52,10 @@ class Graphic(Observer, ttk.Frame):
         nx.draw_networkx_nodes(G, pos, ax=ax)
         nx.draw_networkx_edges(G, pos, edge_color=edge_colors, ax=ax)
         nx.draw_networkx_labels(G, pos, ax=ax)
+        nx.draw_networkx_edge_labels(
+            G, pos, edge_labels={(u, v): d["weight"] for u, v, d in G.edges(data=True)}
+        )
 
         self.canvas = FigureCanvasTkAgg(fig, master=self)
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
-
-    def toggle_frame(self):
-        if self.canvas.get_tk_widget().winfo_ismapped():
-            self.canvas.get_tk_widget().pack_forget()
-            self.show_btn.config(text="Mostrar")
-        else:
-            self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
-            self.show_btn.config(text="Ocultar")
-
-    def update(self, *args, **kwargs):
-        self.example_problem_plot(*args, **kwargs)
