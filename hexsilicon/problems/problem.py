@@ -7,10 +7,7 @@ class Problem(object):
         self.function = None
         self.searchspace = None
         self.context = context
-    
-    @abstractmethod
-    def make_representation(self):
-        pass
+        self.representation = None
 
     @abstractmethod
     def get_representation(self):
@@ -27,14 +24,6 @@ class Problem(object):
     
     @abstractmethod
     def check_restrictions(self, solution):
-        pass
-    
-    @abstractmethod
-    def get_random_point(self):
-        pass
-    
-    @abstractmethod
-    def get_next_nodes(self, current_node):
         pass
     
     @abstractmethod

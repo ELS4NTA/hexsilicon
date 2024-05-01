@@ -9,7 +9,9 @@ class SimulationConfigure(ttk.Frame):
         super().__init__(master)
         self.master = master
         self.swarms_descriptions = self.get_descriptions("Swarm")
-        self.problems_descriptions = self.get_descriptions("Problem")
+        print(self.swarms_descriptions)
+        self.problems_descriptions = self.get_descriptions("GraphProblem")
+        print(self.problems_descriptions)
         self.selected_swarm = None
         self.selected_algorithm = None
         self.selected_problem = None

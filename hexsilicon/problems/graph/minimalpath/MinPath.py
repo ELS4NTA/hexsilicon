@@ -4,16 +4,19 @@ import pandas as pd
 import networkx as nx
 
 from hexsilicon.problems.functions.roadcost import RoadCostFunction
-from hexsilicon.problems.problem import Problem
+from hexsilicon.problems.graph.graphproblem import GraphProblem
 
 
-class MinPath(Problem):
+class MinPath(GraphProblem):        
 
     def __init__(self, context):
-        super().__init__()
+        super().__init__(context)
         self.function = RoadCostFunction()
         self.context = context
         self.representation = self.make_representation()
+    
+    def get_edge_weight(self, node1, node2):
+        return self.representation[node1][node2]['weight']
 
     def get_next_nodes(self, current_node):
         return list(self.representation.neighbors(current_node))
@@ -24,6 +27,7 @@ class MinPath(Problem):
         return True
         
     def make_representation(self):
+        print(self.context)
         self.df = pd.read_csv(StringIO(self.context), sep=';')
         self.df.columns = ['source', 'target', 'weight', 'initial', 'final', 'minimization']
         df_formatted = pd.DataFrame({
@@ -31,6 +35,8 @@ class MinPath(Problem):
             'target': self.df['target'],
             'weight': self.df['weight'].astype(float)
         })
+        print(df_formatted)
+        
         return nx.from_pandas_edgelist(df_formatted, 'source', 'target', ['weight'])
     
     def get_random_point(self):
