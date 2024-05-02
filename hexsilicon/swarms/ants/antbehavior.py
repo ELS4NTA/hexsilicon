@@ -7,7 +7,7 @@ class AntBehavior(Behavior):
         self.hyperparams = {
             'n_iterations': {
                 "name": "Iteraciones",
-                "value": 20,
+                "value": 50,
                 "range": (1, 1000),
                 "description": "Cantidad de iteraciones en el enjambre"
             }

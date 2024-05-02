@@ -79,24 +79,3 @@ class Environment(Observer, ttk.Labelframe):
     
     def get_points_paint(self):
         pass
-
-class TestBall:
-    def __init__(self, canvas, points, image_path, speed_factor=0.01, image_size=(50, 50)):
-        self.canvas = canvas
-        self.points = points
-        self.speed_factor = speed_factor
-        image = Image.open(image_path)  
-        image = image.resize(image_size)  
-        self.image = ImageTk.PhotoImage(image)
-        self.id = canvas.create_image(points[0][0], points[0][1], image=self.image)
-        self.current_point_index = 0
-        self.x_velocity = self.y_velocity = 0
-
-    def move(self):
-        current_coords = self.canvas.coords(self.id)
-        if abs(current_coords[0] - self.points[self.current_point_index][0]) < 1 and abs(current_coords[1] - self.points[self.current_point_index][1]) < 1:
-            self.current_point_index = (self.current_point_index + 1) % len(self.points)
-            next_point = self.points[self.current_point_index]
-            self.x_velocity = (next_point[0] - current_coords[0]) * self.speed_factor
-            self.y_velocity = (next_point[1] - current_coords[1]) * self.speed_factor
-        self.canvas.move(self.id, self.x_velocity, self.y_velocity)

@@ -1,16 +1,32 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
+from hexsilicon.presentation.runner.observer import Observer
 
-class Representation(ttk.Frame):
-    
+
+class Representation(Observer, ttk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.create_widgets()
     
     def create_widgets(self):
-        self.btn_group = ttk.Frame(self)
-        self.reset_btn = ttk.Button(self.btn_group, text="Algo")
-        self.reset_btn.pack(side=LEFT, expand=YES, ipady=5, ipadx=15, padx=2)
-        self.btn_group.pack(side=BOTTOM, expand=YES, fill=BOTH, padx=100, pady=10)
+        frame = ttk.Frame(self)
+        frame.pack(expand=YES, fill=BOTH)
+
+        self.text = ttk.Text(frame, height=10)
+        self.text.pack(side=LEFT, fill=BOTH, expand=YES)
+
+        self.scrollbar = ttk.Scrollbar(frame, orient=VERTICAL, command=self.text.yview, bootstyle="primary-round")
+        self.scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.text['yscrollcommand'] = self.scrollbar.set
+
+    def update(self, swarm):
+        print("Se pinta la representación por iteracion")
+        path_history = swarm.path_history
+        for iteration, path in path_history.items():
+            position = f'{iteration+1}.0'
+            self.text.insert(position, f"Iteración {iteration+1} el mejor camino fue: {path}\n")
+

@@ -1,6 +1,5 @@
-from idlelib.tooltip import Hovertip
-
 import ttkbootstrap as ttk
+from idlelib.tooltip import Hovertip
 from ttkbootstrap.constants import *
 
 
@@ -11,7 +10,8 @@ class Hyperparameters(ttk.Frame):
         self.master = master
         self.values = {}
         self.start_values = {}
-        self.set_hyperparams(hyperparams)
+        self.hyperparams = hyperparams
+        self.set_hyperparams_widgets(hyperparams)
         self.create_widgets()
 
     def create_widgets(self):
@@ -22,14 +22,14 @@ class Hyperparameters(ttk.Frame):
         self.update_btn.pack(side=LEFT, expand=YES, ipady=5, ipadx=15, padx=2)
         self.btn_group.pack(side=BOTTOM, expand=YES, fill=BOTH, padx=100, pady=10)
 
-    def set_hyperparams(self, hyperparams):
+    def set_hyperparams_widgets(self, hyperparams):
         for hyperparam in hyperparams.keys():
             data = hyperparams[hyperparam]
             self.start_values[hyperparam] = data["value"]
 
             container = ttk.Frame(self)
             label = ttk.Label(container, text=data["name"], bootstyle=PRIMARY)
-            Hovertip(label, data["description"])
+            Hovertip(container, data["description"])
             min_label = ttk.Label(container, text=data["range"][0])
             max_label = ttk.Label(container, text=data["range"][1])
             current_value_str = ttk.StringVar(value=data["value"])
@@ -61,9 +61,11 @@ class Hyperparameters(ttk.Frame):
 
     def update_hyperparams(self):
         for hyperparam in self.values.keys():
+            self.hyperparams[hyperparam]["value"] = self.values[hyperparam][0].get()
             print(f"{hyperparam}: {self.values[hyperparam][0].get()}")
 
     def reset_hyperparams(self):
         for hyperparam in self.values.keys():
             self.values[hyperparam][0].set(self.start_values[hyperparam])
             self.values[hyperparam][1].set(self.start_values[hyperparam])
+        self.update_hyperparams()

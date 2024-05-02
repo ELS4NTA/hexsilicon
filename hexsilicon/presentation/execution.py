@@ -13,6 +13,7 @@ class Execution(ttk.Frame):
     def __init__(self, master=None, hyperparams=None):
         super().__init__(master)
         self.hyperparams = hyperparams
+        self.widget_frames = []
         self.create_widgets()
 
     def create_widgets(self):
@@ -33,19 +34,21 @@ class Execution(ttk.Frame):
         self.stop_button.pack(side=LEFT, padx=10)
         self.reset_button.pack(side=LEFT, padx=10)
         self.control_frame.grid(column=0, row=0, sticky=NW)
+        self.widget_frames.append(self.control_frame)
 
     def create_dashboard(self):
         self.dashboard_notebook = ttk.Notebook(self, bootstyle="primary")
         self.create_information()
         self.hyper_frame = Hyperparameters(self.dashboard_notebook, self.hyperparams)
-        self.representation_frame = Representation(self.dashboard_notebook)
+        self.representation = Representation(self.dashboard_notebook)
         self.info_frame.pack(fill=BOTH, expand=YES)
         self.hyper_frame.pack(fill=BOTH, expand=YES)
-        self.representation_frame.pack(fill=BOTH, expand=YES)
+        self.representation.pack(fill=BOTH, expand=YES)
         self.dashboard_notebook.add(self.info_frame, text='Información')
         self.dashboard_notebook.add(self.hyper_frame, text='Hiperparametros')
-        self.dashboard_notebook.add(self.representation_frame, text='Representación')
+        self.dashboard_notebook.add(self.representation, text='Representación')
         self.dashboard_notebook.grid(column=1, row=0, rowspan=2, sticky=E)
+        self.widget_frames.append(self.dashboard_notebook)
 
     def create_information(self):
         self.info_frame = ttk.Frame(self.dashboard_notebook)
@@ -61,6 +64,7 @@ class Execution(ttk.Frame):
     def create_environment(self):
         self.environment = Environment(self)
         self.environment.grid(column=0, row=1, sticky=N)
+        self.widget_frames.append(self.environment)
 
     def return_to_config(self):
         self.master.restore_configuration()
@@ -74,4 +78,6 @@ class Execution(ttk.Frame):
         pass
 
     def reset_execution(self):
-        pass
+        for frame in self.widget_frames:
+            frame.destroy()
+        self.create_widgets()

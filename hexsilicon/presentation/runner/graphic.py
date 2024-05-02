@@ -12,6 +12,7 @@ class Graphic(Observer, ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
+        self.canvas = None
         self.create_widgets()
         self.place_widgets()
 
@@ -24,12 +25,13 @@ class Graphic(Observer, ttk.Frame):
         pass
 
     def toggle_frame(self):
-        if self.canvas.get_tk_widget().winfo_ismapped():
-            self.canvas.get_tk_widget().pack_forget()
-            self.show_btn.config(text="Mostrar")
-        else:
-            self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
-            self.show_btn.config(text="Ocultar")
+        if self.canvas is not None:
+            if self.canvas.get_tk_widget().winfo_ismapped():
+                self.canvas.get_tk_widget().pack_forget()
+                self.show_btn.config(text="Mostrar")
+            else:
+                self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
+                self.show_btn.config(text="Ocultar")
 
     def update(self, swarm):
         print("Se dibuja el grafo :>")
