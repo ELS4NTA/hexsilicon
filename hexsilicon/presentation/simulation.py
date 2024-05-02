@@ -91,6 +91,5 @@ class Simulation(ttk.Window):
         # context_class = self.get_class(self.context)
         
     def start_execution(self):
-        print(f"running with parasm {self.swarm.get_hyperparams()}")
         self.swarm.generate_swarm()
         self.swarm.metaheuristic()

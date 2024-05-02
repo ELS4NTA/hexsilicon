@@ -13,6 +13,8 @@ class Graphic(Observer, ttk.Frame):
         super().__init__(master)
         self.master = master
         self.will_update = True
+        self.first_time = True
+        self.pos = None
         self.create_widgets()
 
     def create_widgets(self):
@@ -46,18 +48,19 @@ class Graphic(Observer, ttk.Frame):
                 reversed(edge)) in path_edges else "black"
             for edge in G.edges()
         ]
-
-        pos = nx.spring_layout(G)
+        if self.first_time:
+            self.first_time = False
+            self.pos = nx.spring_layout(G)
 
         # Limpiar el gráfico existente
         self.ax.clear()
 
         # Dibujar el gráfico
-        nx.draw_networkx_nodes(G, pos, ax=self.ax)
-        nx.draw_networkx_edges(G, pos, edge_color=edge_colors, ax=self.ax)
-        nx.draw_networkx_labels(G, pos, ax=self.ax)
+        nx.draw_networkx_nodes(G, self.pos, ax=self.ax)
+        nx.draw_networkx_edges(G, self.pos, edge_color=edge_colors, ax=self.ax)
+        nx.draw_networkx_labels(G, self.pos, ax=self.ax)
         nx.draw_networkx_edge_labels(
-            G, pos, edge_labels={(u, v): d["weight"] for u, v, d in G.edges(data=True)}, ax=self.ax
+            G, self.pos, edge_labels={(u, v): d["weight"] for u, v, d in G.edges(data=True)}, ax=self.ax
         )
 
         # Redibujar el canvas
