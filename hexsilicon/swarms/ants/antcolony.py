@@ -25,7 +25,7 @@ class AntColony(Swarm):
             self.behavior.update_swarm(self)
             self.history[i] = self.best_agent.get_score()
             self.path_history[i] = self.best_agent.get_solution()
-        self.notify(self)
+            self.notify(self)
 
     def create_solutions(self):
         alpha = self.behavior.get_hyperparams()["alpha"]["value"]

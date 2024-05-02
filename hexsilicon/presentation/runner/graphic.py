@@ -12,29 +12,29 @@ class Graphic(Observer, ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.canvas = None
+        self.will_update = True
         self.create_widgets()
-        self.place_widgets()
 
     def create_widgets(self):
-        self.show_btn = ttk.Button(
-            self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
+        self.show_btn = ttk.Button(self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
 
-    def place_widgets(self):
-        pass
+        # Inicializar la figura y el canvas
+        self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=70)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
 
     def toggle_frame(self):
-        if self.canvas is not None:
-            if self.canvas.get_tk_widget().winfo_ismapped():
-                self.canvas.get_tk_widget().pack_forget()
-                self.show_btn.config(text="Mostrar")
-            else:
-                self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
-                self.show_btn.config(text="Ocultar")
+        if self.canvas.get_tk_widget().winfo_ismapped():
+            self.canvas.get_tk_widget().pack_forget()
+            self.will_update = False
+            self.show_btn.config(text="Mostrar")
+        else:
+            self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
+            self.will_update = True
+            self.show_btn.config(text="Ocultar")
 
     def update(self, swarm):
-        print("Se dibuja el grafo :>")
         G = swarm.problem.get_representation()
 
         path = swarm.best_agent.get_solution()
@@ -49,15 +49,17 @@ class Graphic(Observer, ttk.Frame):
 
         pos = nx.spring_layout(G)
 
-        fig = plt.figure(figsize=(6, 4), dpi=70)
-        ax = fig.add_subplot(111)
-        nx.draw_networkx_nodes(G, pos, ax=ax)
-        nx.draw_networkx_edges(G, pos, edge_color=edge_colors, ax=ax)
-        nx.draw_networkx_labels(G, pos, ax=ax)
+        # Limpiar el gráfico existente
+        self.ax.clear()
+
+        # Dibujar el gráfico
+        nx.draw_networkx_nodes(G, pos, ax=self.ax)
+        nx.draw_networkx_edges(G, pos, edge_color=edge_colors, ax=self.ax)
+        nx.draw_networkx_labels(G, pos, ax=self.ax)
         nx.draw_networkx_edge_labels(
-            G, pos, edge_labels={(u, v): d["weight"] for u, v, d in G.edges(data=True)}
+            G, pos, edge_labels={(u, v): d["weight"] for u, v, d in G.edges(data=True)}, ax=self.ax
         )
 
-        self.canvas = FigureCanvasTkAgg(fig, master=self)
-        self.canvas.draw()
-        self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
+        # Redibujar el canvas
+        if self.will_update:
+            self.canvas.draw()
