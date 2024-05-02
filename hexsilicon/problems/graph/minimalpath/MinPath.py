@@ -34,8 +34,6 @@ class MinPath(GraphProblem):
             'target': self.df['target'],
             'weight': self.df['weight'].astype(float)
         })
-        print(df_formatted)
-        
         return nx.from_pandas_edgelist(df_formatted, 'source', 'target', ['weight'])
     
     def get_random_point(self):
