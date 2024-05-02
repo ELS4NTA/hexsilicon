@@ -5,7 +5,6 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
 from hexsilicon.presentation.configuration import Configuration
-from hexsilicon.presentation.configure_simulation import SimulationConfigure
 from hexsilicon.presentation.execution import Execution
 
 
@@ -36,7 +35,7 @@ class Simulation(ttk.Window):
         self.resizable(False, False)
 
     def create_widgets(self):
-        self.configuration = SimulationConfigure(master=self)
+        self.configuration = Configuration(master=self)
         self.configuration.pack()
 
     def start_simulation(self, swarm, algorithm, problem, context):

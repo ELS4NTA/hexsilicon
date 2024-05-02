@@ -9,7 +9,7 @@ class Configuration(ttk.Frame):
         super().__init__(master)
         self.master = master
         self.swarms_descriptions = self.get_descriptions("Swarm")
-        self.problems_descriptions = self.get_descriptions("Problem")
+        self.problems_descriptions = self.get_descriptions("GraphProblem")
         self.selected_swarm = None
         self.selected_algorithm = None
         self.selected_problem = None
