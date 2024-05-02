@@ -12,42 +12,57 @@ class History(Observer, ttk.Frame):
         super().__init__(master)
         self.master = master
         self.canvas = None
+        self.will_update = True
         self.create_widgets()
-        self.place_widgets()
 
     def create_widgets(self):
         self.show_btn = ttk.Button(self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
 
-    def place_widgets(self):
-        pass
+        # Inicializar la figura y los ejes
+        self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=70)
+        self.ax.set_xlabel("Iteración")
+        self.ax.set_ylabel("Costo")
+        self.ax.set_title("Función de costo")
+
+        # Crear un objeto Line2D vacío
+        self.line, = self.ax.plot([], [], label="y = x^2")
+
+        # Mostrar la gráfica en el marco sin redimensionamiento
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
 
     def toggle_frame(self):
         if self.canvas is not None:
             if self.canvas.get_tk_widget().winfo_ismapped():
                 self.canvas.get_tk_widget().pack_forget()
+                self.will_update = False
                 self.show_btn.config(text="Mostrar")
             else:
                 self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
+                self.will_update = True
                 self.show_btn.config(text="Ocultar")
 
     def update(self, swarm):
-        print("Se dibuja la historia")
         history = swarm.history
-        fig = plt.figure(figsize=(6, 4), dpi=70)
 
-        # Graficar la función y personalizar la gráfica
-        ax = fig.add_subplot(111)
-        x = history.keys()
-        y = history.values()
-        ax.plot(x, y, label="y = x^2")
-        ax.set_xlabel("Iteración")
-        ax.set_ylabel("Costo")
-        ax.set_title("Función de costo")
+        # Actualizar los datos del objeto Line2D
+        x = list(history.keys())
+        y = list(history.values())
+        self.line.set_data(x, y)
 
-        # Mostrar la gráfica en el marco sin redimensionamiento
-        self.canvas = FigureCanvasTkAgg(fig, master=self)
-        self.canvas.draw()
+        # Ajustar los límites de los ejes para acomodar los nuevos datos
+        if len(set(x)) > 1:
+            self.ax.set_xlim(min(x), max(x))
+        else:
+            self.ax.set_xlim(min(x) - 1, max(x) + 1)
 
-        # Configurar el Canvas para que no tenga bordes de resaltado
-        self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
+        if len(set(y)) > 1:
+            self.ax.set_ylim(min(y), max(y))
+        else:
+            self.ax.set_ylim(min(y) - 1, max(y) + 1)
+
+        # Redibujar el canvas
+        if self.will_update:
+            self.canvas.draw()

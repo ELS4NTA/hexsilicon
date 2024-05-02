@@ -52,7 +52,6 @@ class Swarm(Observable):
 
     def notify(self, swarm):
         for observer in self.observers:
-            print("Notifying observer")
             observer.update(swarm)
 
     def get_history(self):
