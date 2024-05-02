@@ -4,6 +4,7 @@ import pkgutil
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
+from hexsilicon.presentation.configuration import Configuration
 from hexsilicon.presentation.configure_simulation import SimulationConfigure
 from hexsilicon.presentation.execution import Execution
 
@@ -50,6 +51,7 @@ class Simulation(ttk.Window):
         self.swarm.subscribe(self.execution.history)
         self.swarm.subscribe(self.execution.graphic)
         self.swarm.subscribe(self.execution.environment)
+        self.swarm.subscribe(self.execution.representation)
         self.execution.pack(expand=YES, fill=BOTH)
 
     def load_modules(self, package):
@@ -90,5 +92,6 @@ class Simulation(ttk.Window):
         # context_class = self.get_class(self.context)
         
     def start_execution(self):
+        print(f"running with parasm {self.swarm.get_hyperparams()}")
         self.swarm.generate_swarm()
         self.swarm.metaheuristic()

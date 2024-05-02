@@ -1,7 +1,7 @@
 from io import StringIO
 
-import pandas as pd
 import networkx as nx
+import pandas as pd
 
 from hexsilicon.problems.functions.roadcost import RoadCostFunction
 from hexsilicon.problems.graph.graphproblem import GraphProblem
@@ -27,7 +27,6 @@ class MinPath(GraphProblem):
         return True
         
     def make_representation(self):
-        print(self.context)
         self.df = pd.read_csv(StringIO(self.context), sep=';')
         self.df.columns = ['source', 'target', 'weight', 'initial', 'final', 'minimization']
         df_formatted = pd.DataFrame({

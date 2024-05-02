@@ -14,5 +14,5 @@ class Observable(ABC):
         pass
 
     @abstractmethod
-    def notify(self, *args, **kwargs):
+    def notify(self, swarm):
         pass

@@ -3,13 +3,13 @@ from tkinter import filedialog
 import ttkbootstrap as ttk
 
 
-class SimulationConfigure(ttk.Frame):
+class Configuration(ttk.Frame):
 
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.swarms_descriptions = self.get_descriptions("Swarm")
-        self.problems_descriptions = self.get_descriptions("GraphProblem")
+        self.problems_descriptions = self.get_descriptions("Problem")
         self.selected_swarm = None
         self.selected_algorithm = None
         self.selected_problem = None

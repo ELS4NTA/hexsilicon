@@ -11,24 +11,20 @@ class AntColony(Swarm):
     def __init__(self, behavior=None, problem=None):
         super().__init__(behavior, problem)
         self.pheromone_matrix = None
-        self.weights_matrix = None
+        self.path_history = {}
 
     def generate_swarm(self):
-        graph = self.problem.get_representation()
         n_agents = self.get_hyperparams()["n_agents"]["value"]
-        # No lo da en orden :(
-        self.weights_matrix = nx.to_pandas_adjacency(graph).sort_index().sort_index(axis=1).values
-        self.pheromone_matrix = np.zeros((len(graph.nodes), len(graph.nodes)))
-        self.pheromone_matrix.fill(self.behavior.get_hyperparams()["pheromone_0"]["value"])
+        self.pheromone_matrix = np.empty((0, 0))
         self.population = [Agent("Ant") for _ in range(n_agents)]
 
     def metaheuristic(self):
         num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
         for i in range(num_iterations):
-            print("iteration", i)
             self.create_solutions()
             self.behavior.update_swarm(self)
             self.history[i] = self.best_agent.get_score()
+            self.path_history[i] = self.best_agent.get_solution()
         self.notify(self)
 
     def create_solutions(self):
@@ -42,8 +38,9 @@ class AntColony(Swarm):
                 next_nodes = self.problem.get_next_nodes(current_node)
                 probabilities = np.zeros(len(next_nodes))
                 for i, next_node in enumerate(next_nodes):
-                    probabilities[i] = self.pheromone_matrix[current_node-1][next_node-1] ** alpha \
-                                       * (1 / self.weights_matrix[current_node-1][next_node-1]) ** beta
+                    pheromone = self.get_edge_pheromone(current_node, next_node)
+                    weight = self.problem.get_edge_weight(current_node, next_node)
+                    probabilities[i] = (pheromone ** alpha) * ((1 / weight) ** beta)
                 probabilities = np.divide(probabilities, np.sum(probabilities))
                 next_node = rng.choice(next_nodes, p=probabilities)
                 path.append(next_node)
@@ -53,6 +50,25 @@ class AntColony(Swarm):
 
     def get_best_agent(self):
         return self.best_agent.get_solution()
+
+    def get_edge_pheromone(self, current_node, next_node):
+        max_node_index = max(current_node, next_node)
+        required_shape = (max_node_index + 1, max_node_index + 1)
+        if self.pheromone_matrix.shape[0] < required_shape[0]:
+            # Create a new, larger matrix with zeros
+            new_matrix = np.zeros(required_shape)
+            # Copy existing values from the old matrix to the new one
+            new_matrix[:self.pheromone_matrix.shape[0], :self.pheromone_matrix.shape[1]] = self.pheromone_matrix
+            # Set the pheromone_matrix reference to the new, extended matrix
+            self.pheromone_matrix = new_matrix
+
+        # Access and potentially initialize the pheromone value
+        pheromone_value = self.pheromone_matrix[current_node, next_node]
+        if pheromone_value == 0:
+            pheromone_0 = self.behavior.get_hyperparams()["pheromone_0"]["value"]
+            self.pheromone_matrix[current_node, next_node] = pheromone_0
+            pheromone_value = pheromone_0
+        return pheromone_value
 
     @staticmethod
     def get_description():
