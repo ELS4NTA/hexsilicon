@@ -19,7 +19,3 @@ class Behavior(ABC):
     @abstractmethod
     def get_hyperparams(self):
         pass
-
-    @abstractmethod
-    def get_hyperparams_description(self):
-        pass

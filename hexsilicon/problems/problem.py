@@ -9,8 +9,11 @@ class Problem(object):
         self.context = context
         self.representation = None
 
-    @abstractmethod
     def get_representation(self):
+        return self.representation
+
+    @abstractmethod
+    def make_representation(self):
         pass
 
     @staticmethod
@@ -21,14 +24,14 @@ class Problem(object):
     @abstractmethod
     def get_restrictions(self):
         pass
-    
+
     @abstractmethod
     def check_restrictions(self, solution):
         pass
-    
+
     @abstractmethod
     def is_minimization(self):
         pass
 
     def call_function(self, solution) -> float:
-        return self.function.evaluate(solution, self.representation)
+        return self.function.evaluate(solution.get_representation(), self.representation)  # type: ignore

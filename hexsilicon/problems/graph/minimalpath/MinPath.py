@@ -38,9 +38,6 @@ class MinPath(GraphProblem):
     
     def get_random_point(self):
         return self.df['initial'][0].astype(int)
-        
-    def get_representation(self):
-        return self.representation
 
     def is_minimization(self):
         return True if self.df['minimization'][0] == 'yes' else False

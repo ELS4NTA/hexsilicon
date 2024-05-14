@@ -17,13 +17,13 @@ class Environment(Observer, ttk.Labelframe):
         self.configure(text="Ambiente")
         self.image_ids = []
         self.first_time = True
-        self.speed_factor=0.01
+        self.speed_factor=0.05
         self.current_point_index = 0
         self.x_velocity = self.y_velocity = 0
 
     def create_widgets(self):
 
-        self.show_btn = ttk.Button(self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
+        self.show_btn = ttk.Button(self, text="Ocultar", bootstyle="primary", command=self.toggle_frame) # type: ignore
         self.show_btn.pack()
 
         # Crear un canvas para la imagen
@@ -44,8 +44,9 @@ class Environment(Observer, ttk.Labelframe):
         if self.first_time:
             self.first_time = False
             self.points = self.get_points_grapho(G)        
-            for point in self.points.values():
+            for key, point in self.points.items():
                 self.canvas.create_oval(point[0], point[1], point[0] + 5, point[1] + 5, fill="red")
+                self.canvas.create_text(point[0], point[1], anchor="nw", text=str(key))
         
         # Cargar la imagen
         image = Image.open("icons/insecto.png")
@@ -55,17 +56,14 @@ class Environment(Observer, ttk.Labelframe):
         # Dibujar la imagen en el canvas
         for i, agent in enumerate(swarm.population):
             pased_points = self.get_poinst_solution(agent.get_solution())
-            for point in pased_points:
-                self.canvas.create_oval(point[0], point[1], point[0] + 5, point[1] + 5, fill="blue")
-            current_x, current_y = pased_points.pop(0)
-            image_id = self.canvas.create_image(current_x, current_y, anchor=NW, image=photo)  # Guardar el ID de la imagen
+            image_id = self.canvas.create_image(pased_points[0][0], pased_points[0][1], anchor=NW, image=photo)  # Guardar el ID de la imagen
             self.image_ids.append(image_id)  # Añadir el ID a la lista
-            while len(pased_points) > 0:
-                next_x, next_y = pased_points.pop(0)
-                self.move(image_id, current_x, current_y, next_x, next_y)
-                current_x, current_y = next_x, next_y
+            self.current_point_index = 0
+            print(agent.get_solution())
+            while self.current_point_index < len(pased_points):
+                self.move(image_id, pased_points)
                 self.master.update()
-                time.sleep(0.0001)
+                time.sleep(0.01)
 
     def normalize(self, value, min_value, max_value, new_min, new_max):
         return ((value - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
@@ -89,11 +87,16 @@ class Environment(Observer, ttk.Labelframe):
         path_positions = [tuple(self.points[i]) for i in solution if i in self.points]
         return path_positions
     
-    def move(self, image_id, current_x, current_y, next_x, next_y):
+    def move(self, image_id, points):
         current_coords = self.canvas.coords(image_id)
-        if abs(current_coords[0] - current_x) < 1 and abs(current_coords[1] - current_y) < 1:
-            self.x_velocity = (next_x - current_coords[0]) * self.speed_factor
-            self.y_velocity = (next_y - current_coords[1]) * self.speed_factor
+        if abs(current_coords[0] - points[self.current_point_index][0]) < 1 and abs(current_coords[1] - points[self.current_point_index][1]) < 1:
+            if self.current_point_index == len(points) - 1:
+                self.current_point_index = self.current_point_index + 1
+                return  
+            else:
+                self.current_point_index = (self.current_point_index + 1) % len(points)
+                next_point = points[self.current_point_index]
+                self.x_velocity = (next_point[0] - current_coords[0]) * self.speed_factor
+                self.y_velocity = (next_point[1] - current_coords[1]) * self.speed_factor
         self.canvas.move(image_id, self.x_velocity, self.y_velocity)
-        
         

@@ -1,7 +1,9 @@
+from abc import abstractmethod
+
 from hexsilicon.swarms.behavior import Behavior
 
 
-class AntBehavior(Behavior):
+class ParticleBehavior(Behavior):
 
     def __init__(self, swarm=None):
         self.hyperparams = {

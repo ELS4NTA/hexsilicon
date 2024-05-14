@@ -7,9 +7,10 @@ class Configuration(ttk.Frame):
 
     def __init__(self, master=None):
         super().__init__(master)
-        self.master = master
+        self.master = master # type: ignore
         self.swarms_descriptions = self.get_descriptions("Swarm")
         self.problems_descriptions = self.get_descriptions("GraphProblem")
+        self.problems_descriptions.extend(self.get_descriptions("FreeProblem"))
         self.selected_swarm = None
         self.selected_algorithm = None
         self.selected_problem = None
@@ -112,13 +113,13 @@ class Configuration(ttk.Frame):
                 self.content = file_obj.read()
 
     def start_simulation(self):
-        self.master.start_simulation(self.selected_swarm, self.selected_algorithm, self.selected_problem, self.content)
+        self.master.start_simulation(self.selected_swarm, self.selected_algorithm, self.selected_problem, self.content) # type: ignore
 
     def update_problem_description(self, *args):
         problem_descriptions = next((problem for problem in self.problems_descriptions if problem['name'] == self.problem_combobox.get()), None)
-        description = problem_descriptions['description']
+        description = problem_descriptions['description'] # type: ignore
         self.text_description.config(text=description)
-        self.selected_problem = problem_descriptions['class_name']
+        self.selected_problem = problem_descriptions['class_name'] # type: ignore
         self.text_description.update()
         # Show the label
         self.text_description.grid()
@@ -130,8 +131,8 @@ class Configuration(ttk.Frame):
         algorithm_descriptions = next(
             (behavior for behavior in self.algoritms_descriptions if behavior['name'] == self.algorithm_combobox.get()),
             None)
-        description = algorithm_descriptions['description']
-        self.selected_algorithm = algorithm_descriptions['class_name']
+        description = algorithm_descriptions['description'] # type: ignore
+        self.selected_algorithm = algorithm_descriptions['class_name'] # type: ignore
         self.problem_combobox["values"] = [problem['name'] for problem in self.problems_descriptions if self.algorithm_combobox.get() in problem['algorithms'].split(', ')]
         self.algorithm_description.config(text=description)
         self.algorithm_description.update()
@@ -147,9 +148,9 @@ class Configuration(ttk.Frame):
 
         swarm_descriptions = next(
             (swarm for swarm in self.swarms_descriptions if swarm['name'] == self.swarm_combobox.get()), None)
-        description = swarm_descriptions['description']
-        self.selected_swarm = swarm_descriptions['class_name']
-        self.algoritms_descriptions = self.master.get_descriptions(swarm_descriptions['behavior'])
+        description = swarm_descriptions['description'] # type: ignore
+        self.selected_swarm = swarm_descriptions['class_name'] # type: ignore
+        self.algoritms_descriptions = self.master.get_descriptions(swarm_descriptions['behavior']) # type: ignore
         self.algorithm_combobox["values"] = [behavior["name"] for behavior in self.algoritms_descriptions]
         self.swarm_description.config(text=description)
         self.swarm_description.update()
@@ -157,4 +158,4 @@ class Configuration(ttk.Frame):
         self.swarm_description.grid()
 
     def get_descriptions(self, class_name):
-        return self.master.get_descriptions(class_name)
+        return self.master.get_descriptions(class_name) # type: ignore

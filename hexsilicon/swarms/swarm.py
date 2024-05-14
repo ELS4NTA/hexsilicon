@@ -32,14 +32,13 @@ class Swarm(Observable):
     def metaheuristic(self):
         pass
 
-    @abstractmethod
-    def get_best_agent(self):
-        pass
-
     @staticmethod
     @abstractmethod
     def get_description():
         pass
+
+    def get_best_agent(self):
+        return self.best_agent.get_solution()
 
     def get_hyperparams(self):
         return self.hyperparams | self.behavior.get_hyperparams()
