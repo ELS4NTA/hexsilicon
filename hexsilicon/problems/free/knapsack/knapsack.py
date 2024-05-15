@@ -23,7 +23,6 @@ class Knapsack(FreeProblem):
     def make_representation(self):
         df = pd.read_csv(StringIO(self.context), sep=';')
         df.columns = ['profit', 'weight', 'n', 'wmax', 'minimization']
-        print(df)
         return df
 
     def is_minimization(self):

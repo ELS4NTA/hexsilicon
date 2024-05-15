@@ -39,8 +39,11 @@ class Representation(Observer, ttk.Frame):
 
     def update(self, swarm):
         path_history = swarm.path_history
+        func_history = swarm.history
         iteration = list(path_history.keys())[-1]
         path = path_history[iteration]
+        cost = func_history[iteration]
         if self.will_update:
-            self.text.insert(float(iteration+1), f"Iteración {iteration+1} el mejor camino fue: {path}\n")
+            self.text.insert(float(iteration+1),
+                             f"Iteración {iteration} la mejor solución fue: {path} con el costo {cost}\n")
 

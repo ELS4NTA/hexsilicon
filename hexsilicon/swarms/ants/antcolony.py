@@ -16,6 +16,7 @@ class AntColony(Swarm):
     def generate_swarm(self):
         n_agents = self.get_hyperparams()["n_agents"]["value"]
         self.pheromone_matrix = np.empty((0, 0))
+        self.best_agent = Agent("QueenAnt")
         self.population = [Agent("Ant") for _ in range(n_agents)]
 
     def metaheuristic(self):
@@ -32,12 +33,12 @@ class AntColony(Swarm):
         beta = self.behavior.get_hyperparams()["beta"]["value"]
         rng = np.random.default_rng(seed=42)
         for ant in self.population:
-            haveSolution = False
-            while not haveSolution:
+            have_solution = False
+            while not have_solution:
                 current_node = self.problem.get_random_point()
                 path = [current_node]
-                isGoodPath = True
-                while self.problem.check_restrictions(path) and isGoodPath:
+                is_good_path = True
+                while self.problem.check_restrictions(path) and is_good_path:
                     next_nodes = self.problem.get_next_nodes(current_node)
                     next_nodes = [node for node in next_nodes if node not in path]
                     if len(next_nodes) != 0:
@@ -51,11 +52,11 @@ class AntColony(Swarm):
                         path.append(next_node)
                         current_node = next_node
                     else:
-                        isGoodPath = False
-                if isGoodPath:
+                        is_good_path = False
+                if is_good_path:
                     ant.solution = Solution(representation=path)
                     ant.set_score(self.problem.call_function(ant.solution))
-                    haveSolution = True
+                    have_solution = True
 
     def get_edge_pheromone(self, current_node, next_node):
         max_node_index = max(current_node, next_node)
@@ -75,6 +76,9 @@ class AntColony(Swarm):
             self.pheromone_matrix[current_node, next_node] = pheromone_0
             pheromone_value = pheromone_0
         return pheromone_value
+
+    def get_passed_points_agent(self, idx):
+        return self.population[idx].get_solution()
 
     @staticmethod
     def get_description():

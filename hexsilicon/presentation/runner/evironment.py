@@ -55,11 +55,10 @@ class Environment(Observer, ttk.Labelframe):
 
         # Dibujar la imagen en el canvas
         for i, agent in enumerate(swarm.population):
-            pased_points = self.get_poinst_solution(agent.get_solution())
+            pased_points = self.get_points_solution(swarm.get_passed_points_agent(i))
             image_id = self.canvas.create_image(pased_points[0][0], pased_points[0][1], anchor=NW, image=photo)  # Guardar el ID de la imagen
             self.image_ids.append(image_id)  # Añadir el ID a la lista
             self.current_point_index = 0
-            print(agent.get_solution())
             while self.current_point_index < len(pased_points):
                 self.move(image_id, pased_points)
                 self.master.update()
@@ -83,7 +82,7 @@ class Environment(Observer, ttk.Labelframe):
             pos[key] = (x, y)
         return pos
     
-    def get_poinst_solution(self, solution):
+    def get_points_solution(self, solution):
         path_positions = [tuple(self.points[i]) for i in solution if i in self.points]
         return path_positions
     

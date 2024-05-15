@@ -27,8 +27,8 @@ class Simulation(ttk.Window):
     def configure_window(self):
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        window_width = int(screen_width * 0.95)
-        window_height = int(screen_height * 0.95)
+        window_width = int(screen_width * 1)
+        window_height = int(screen_height * 1)
         x = int((screen_width / 2) - (window_width / 2))
         y = int((screen_height / 2) - (window_height / 2))
         self.geometry(f"{window_width}x{window_height}+{x}+{y}")

@@ -37,6 +37,10 @@ class Swarm(Observable):
     def get_description():
         pass
 
+    @abstractmethod
+    def get_passed_points_agent(self, idx):
+        pass
+
     def get_best_agent(self):
         return self.best_agent.get_solution()
 

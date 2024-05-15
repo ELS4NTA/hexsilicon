@@ -1,4 +1,5 @@
 from hexsilicon.swarms.ants.antbehavior import AntBehavior
+import numpy as np
 
 
 # Simple Ant Colony Optimization (SACO) algorithm or Simple Ant System (AS) algorithm
@@ -13,9 +14,19 @@ class SACO(AntBehavior):
 
     def update_swarm(self, swarm):
         func = min if swarm.problem.is_minimization() else max
-        swarm.best_agent = func(swarm.population, key=lambda agent: agent.get_score())
+        temp_agent = func(swarm.population, key=lambda agent: agent.get_score())
+        if swarm.best_agent.solution is None:
+            swarm.best_agent.solution = temp_agent.solution
+        else:
+            new_best = func([swarm.best_agent, temp_agent], key=lambda agent: agent.get_score())
+            swarm.best_agent.solution = new_best.solution
         swarm.pheromone_matrix *= (1 - self.hyperparams['rho']["value"])
-        swarm.pheromone_matrix += self.hyperparams['q']["value"]
+        delta_pheromone = np.zeros_like(swarm.pheromone_matrix)
+        for ant in swarm.population:
+            path = ant.solution.get_representation()
+            for i in range(len(path) - 1):
+                delta_pheromone[path[i], path[i + 1]] += self.hyperparams['q']["value"] / len(path)
+        swarm.pheromone_matrix += delta_pheromone
 
     def get_hyperparams(self):
         return self.hyperparams

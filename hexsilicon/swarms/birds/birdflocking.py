@@ -12,6 +12,7 @@ class BirdFlocking(Swarm):
         self.velocities = None
         self.pbest = []
         self.pcost = []
+        self.history_pos = []
 
     def generate_swarm(self):
         rng = np.random.default_rng(seed=42)
@@ -24,6 +25,7 @@ class BirdFlocking(Swarm):
             bird = Agent("Bird")
             bird.solution = Solution(representation=self.problem.generate_solution())
             self.pbest.append(bird.solution.get_representation())
+            self.history_pos.append(bird.solution.get_representation())
             self.pcost.append(self.problem.call_function(bird.solution))
             self.population.append(bird)
         func = np.argmin if self.problem.is_minimization() else np.argmax
@@ -36,6 +38,9 @@ class BirdFlocking(Swarm):
             self.behavior.update_swarm(self)
             self.history[i] = self.best_agent.get_score()
             self.notify(self)
+
+    def get_passed_points_agent(self, idx):
+        return self.history_pos[idx] + self.population[idx].solution.get_representation()
 
     @staticmethod
     def get_description():

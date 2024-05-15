@@ -14,7 +14,6 @@ class PSO(ParticleBehavior):
         c2 = self.get_hyperparams()["c2"]["value"]
         w = self.get_hyperparams()["w"]["value"]
         for i, agent in enumerate(swarm.population):
-            print(f"pbest: {swarm.pbest[i]}, agent: {agent.solution.representation}")
             cognitive = [c1 * rng.uniform() * (swarm_pbest - agent_representation) for swarm_pbest, agent_representation
                          in zip(swarm.pbest[i], agent.solution.representation)]
 
@@ -28,6 +27,7 @@ class PSO(ParticleBehavior):
 
     def update_swarm(self, swarm):
         for i, agent in enumerate(swarm.population):
+            swarm.history_pos[i] = agent.solution.representation
             agent.solution.representation += swarm.velocities[i]
             agent.set_score(swarm.problem.call_function(agent.solution))
             if swarm.problem.is_minimization():
