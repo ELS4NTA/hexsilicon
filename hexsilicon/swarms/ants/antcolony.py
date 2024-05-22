@@ -80,6 +80,9 @@ class AntColony(Swarm):
     def get_passed_points_agent(self, idx):
         return self.population[idx].get_solution()
 
+    def to_2d(self):
+        return self.problem.get_representation()
+
     @staticmethod
     def get_description():
         return {

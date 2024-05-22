@@ -42,6 +42,9 @@ class BirdFlocking(Swarm):
     def get_passed_points_agent(self, idx):
         return self.history_pos[idx] + self.population[idx].solution.get_representation()
 
+    def to_2d(self):
+        return [agent.solution.get_representation() for agent in self.population]
+
     @staticmethod
     def get_description():
         return {

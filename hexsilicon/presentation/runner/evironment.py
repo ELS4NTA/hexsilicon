@@ -1,6 +1,7 @@
 import time
 
 import networkx as nx
+import umap
 import ttkbootstrap as ttk
 from PIL import Image, ImageTk
 from ttkbootstrap.constants import *
@@ -20,6 +21,7 @@ class Environment(Observer, ttk.Labelframe):
         self.speed_factor=0.05
         self.current_point_index = 0
         self.x_velocity = self.y_velocity = 0
+        self.reducer = umap.UMAP(n_components=2)
 
     def create_widgets(self):
 
@@ -40,36 +42,43 @@ class Environment(Observer, ttk.Labelframe):
             self.show_btn.config(text="Ocultar")
 
     def update(self, swarm: Swarm):
-        G = swarm.problem.get_representation()
-        if self.first_time:
-            self.first_time = False
-            self.points = self.get_points_grapho(G)        
-            for key, point in self.points.items():
-                self.canvas.create_oval(point[0], point[1], point[0] + 5, point[1] + 5, fill="red")
-                self.canvas.create_text(point[0], point[1], anchor="nw", text=str(key))
+        representation = swarm.to_2d()
+        if not swarm.has_free_problem():
+            if self.first_time:
+                self.first_time = False
+                pos = nx.spring_layout(representation)
+                self.points = self.get_points(pos)
+                for key, point in self.points.items():
+                    self.canvas.create_oval(point[0], point[1], point[0] + 5, point[1] + 5, fill="red")
+                    self.canvas.create_text(point[0], point[1], anchor="nw", text=str(key))
+        else:
+            X_2d = self.reducer.fit_transform(representation)
+            pos = {i: tuple(X_2d[i]) for i in range(len(X_2d))}
+            self.points = self.get_points(pos)
         
         # Cargar la imagen
-        image = Image.open("icons/insecto.png")
+        image = Image.open(f"icons/{swarm.population[0].name}.png")
         image = image.resize((24, 24))
         photo = ImageTk.PhotoImage(image)
 
         # Dibujar la imagen en el canvas
         for i, agent in enumerate(swarm.population):
-            pased_points = self.get_points_solution(swarm.get_passed_points_agent(i))
-            image_id = self.canvas.create_image(pased_points[0][0], pased_points[0][1], anchor=NW, image=photo)  # Guardar el ID de la imagen
+            if not swarm.has_free_problem():
+                passed_points = self.get_points_solution(swarm.get_passed_points_agent(i))
+            else:
+                passed_points = self.points[i]
+            image_id = self.canvas.create_image(passed_points[0][0], passed_points[0][1], anchor=NW, image=photo)  # Guardar el ID de la imagen
             self.image_ids.append(image_id)  # Añadir el ID a la lista
             self.current_point_index = 0
-            while self.current_point_index < len(pased_points):
-                self.move(image_id, pased_points)
+            while self.current_point_index < len(passed_points):
+                self.move(image_id, passed_points)
                 self.master.update()
                 time.sleep(0.01)
 
     def normalize(self, value, min_value, max_value, new_min, new_max):
         return ((value - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
     
-    def get_points_grapho(self, G):
-        pos = nx.spring_layout(G)
-        
+    def get_points(self, pos):
         # Encontrar los valores mínimos y máximos de las posiciones
         self.min_x = min(pos.values(), key=lambda x: x[0])[0]
         self.max_x = max(pos.values(), key=lambda x: x[0])[0]
@@ -98,4 +107,6 @@ class Environment(Observer, ttk.Labelframe):
                 self.x_velocity = (next_point[0] - current_coords[0]) * self.speed_factor
                 self.y_velocity = (next_point[1] - current_coords[1]) * self.speed_factor
         self.canvas.move(image_id, self.x_velocity, self.y_velocity)
+
+
         

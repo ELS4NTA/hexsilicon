@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from hexsilicon.presentation.runner.observer import Observer
+from hexsilicon.problems.free.freeproblem import FreeProblem
 from hexsilicon.problems.problem import Problem
 from hexsilicon.swarms.observable import Observable
 
@@ -40,6 +41,13 @@ class Swarm(Observable):
     @abstractmethod
     def get_passed_points_agent(self, idx):
         pass
+
+    @abstractmethod
+    def to_2d(self):
+        pass
+
+    def has_free_problem(self):
+        return isinstance(self.problem, FreeProblem)
 
     def get_best_agent(self):
         return self.best_agent.get_solution()
