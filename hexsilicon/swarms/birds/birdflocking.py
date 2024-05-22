@@ -21,15 +21,20 @@ class BirdFlocking(Swarm):
         max_velocity = int(self.get_hyperparams()["v_max"]["value"])
         min_velocity = int(self.get_hyperparams()["v_min"]["value"])
         self.velocities = (max_velocity - min_velocity) * rng.random(size=(n_agents, dimensions)) + min_velocity
+        print(self.velocities)
         for _ in range(n_agents):
             bird = Agent("Bird")
             bird.solution = Solution(representation=self.problem.generate_solution())
+            score = self.problem.call_function(bird.solution)
+            bird.set_score(score)
             self.pbest.append(bird.solution.get_representation())
             self.history_pos.append(bird.solution.get_representation())
-            self.pcost.append(self.problem.call_function(bird.solution))
+            self.pcost.append(score)
             self.population.append(bird)
         func = np.argmin if self.problem.is_minimization() else np.argmax
-        self.best_agent = self.population[func(self.pcost)]
+        self.best_agent = Agent("BestBird")
+        self.best_agent.solution = Solution(representation=self.pbest[func(self.pcost)])
+        self.best_agent.set_score(self.pcost[func(self.pcost)])
 
     def metaheuristic(self):
         num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]

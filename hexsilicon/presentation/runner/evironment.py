@@ -66,7 +66,7 @@ class Environment(Observer, ttk.Labelframe):
             if not swarm.has_free_problem():
                 passed_points = self.get_points_solution(swarm.get_passed_points_agent(i))
             else:
-                passed_points = self.points[i]
+                passed_points = [self.points[i]]
             image_id = self.canvas.create_image(passed_points[0][0], passed_points[0][1], anchor=NW, image=photo)  # Guardar el ID de la imagen
             self.image_ids.append(image_id)  # Añadir el ID a la lista
             self.current_point_index = 0

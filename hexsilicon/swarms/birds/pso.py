@@ -1,5 +1,6 @@
-from hexsilicon.swarms.birds.particlebehavior import ParticleBehavior
 import numpy as np
+
+from hexsilicon.swarms.birds.particlebehavior import ParticleBehavior
 
 
 class PSO(ParticleBehavior):
@@ -28,20 +29,24 @@ class PSO(ParticleBehavior):
     def update_swarm(self, swarm):
         for i, agent in enumerate(swarm.population):
             swarm.history_pos[i] = agent.solution.representation
-            agent.solution.representation += swarm.velocities[i]
+            if swarm.problem.is_binary():
+                agent.solution.representation = [1 if v_i > 0.5 else 0 for v_i in swarm.velocities[i]]
+            else:
+                agent.solution.representation += swarm.velocities[i]
             agent.set_score(swarm.problem.call_function(agent.solution))
             if swarm.problem.is_minimization():
                 if agent.get_score() < swarm.pcost[i]:
-                    swarm.pbest[i] = agent.solution
+                    swarm.pbest[i] = agent.solution.get_representation()
                     swarm.pcost[i] = agent.get_score()
                     if agent.get_score() < swarm.best_agent.get_score():
-                        swarm.best_agent = agent
+                        swarm.best_agent.solution = agent.solution
             else:
+                print("Max")
                 if agent.get_score() > swarm.pcost[i]:
-                    swarm.pbest[i] = agent.solution
+                    swarm.pbest[i] = agent.solution.get_representation()
                     swarm.pcost[i] = agent.get_score()
                     if agent.get_score() > swarm.best_agent.get_score():
-                        swarm.best_agent = agent
+                        swarm.best_agent.solution = agent.solution
 
     def get_hyperparams(self):
         return self.hyperparams
@@ -50,7 +55,7 @@ class PSO(ParticleBehavior):
         self.hyperparams = self.hyperparams | {
             "v_min": {
                 "name": "Velocidad Minima",
-                "value": 1.0,
+                "value": 0.0,
                 "range": (0.0, 1.0),
                 "description": "Define la velocidad mínima de las partículas"
             },

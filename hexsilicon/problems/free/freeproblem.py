@@ -6,6 +6,7 @@ class FreeProblem(Problem):
 
     def __init__(self, context=None):
         super().__init__(context)
+        self.binary = False
         
     @abstractmethod
     def get_dimensions(self):
@@ -17,5 +18,9 @@ class FreeProblem(Problem):
 
     @abstractmethod
     def clip_velocity(self, temp_velocity):
+        pass
+
+    @abstractmethod
+    def is_binary(self):
         pass
 

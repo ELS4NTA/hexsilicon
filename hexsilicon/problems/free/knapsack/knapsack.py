@@ -1,7 +1,8 @@
+import random
 from io import StringIO
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from hexsilicon.problems.free.freeproblem import FreeProblem
 from hexsilicon.problems.functions.knapsackFunction import KnapsackFunction
@@ -13,10 +14,11 @@ class Knapsack(FreeProblem):
         super().__init__(context)
         self.function = KnapsackFunction()
         self.context = context
+        self.binary = True
         self.representation = self.make_representation()
 
     def check_restrictions(self, solution):
-        if self.function.evaluate(solution, self.representation) != 1E-5:
+        if self.function.evaluate(solution, self.representation) == 1E-5:
             return False
         return True
 
@@ -32,10 +34,16 @@ class Knapsack(FreeProblem):
         return int(self.representation['n'][0])
 
     def generate_solution(self):
-        return [0] * self.get_dimensions()
+        solution = [1] * self.get_dimensions()
+        while not self.check_restrictions(solution):
+            solution = [random.randint(0, 1) for _ in range(self.get_dimensions())]
+        return solution
 
     def clip_velocity(self, temp_velocity):
-        return np.round(temp_velocity).astype(int)
+        return 1 / (1 + np.exp(-temp_velocity))
+
+    def is_binary(self):
+        return self.binary
 
     @staticmethod
     def get_description():
