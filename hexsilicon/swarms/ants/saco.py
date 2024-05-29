@@ -18,7 +18,7 @@ class SACO(AntBehavior):
 
     def move_swarm(self, swarm):
         problem = swarm.problem
-        rng = np.random.default_rng(seed=42)
+        rng = np.random.default_rng()
         alpha = self.hyperparams["alpha"]["value"]
         beta = self.hyperparams["beta"]["value"]
         while True:
@@ -35,7 +35,7 @@ class SACO(AntBehavior):
                 for i, next_node in enumerate(next_nodes):
                     pheromone = swarm.get_edge_pheromone(current_node, next_node)
                     weight = problem.get_edge_weight(current_node, next_node)
-                    probabilities[i] = (pheromone ** alpha) * (weight ** beta)
+                    probabilities[i] = (pheromone ** alpha) * ((1 / weight) ** beta)
                 probabilities /= probabilities.sum()
                 next_node = rng.choice(next_nodes, p=probabilities)
                 path.append(next_node)
@@ -49,11 +49,13 @@ class SACO(AntBehavior):
         rho = self.hyperparams['rho']['value']
         func = min if is_minimization else max
         best_ant = func(swarm.population, key=lambda agent: agent.get_score())
+        if swarm.best_agent.solution is None:
+            swarm.best_agent.solution = best_ant.solution
         update_best = best_ant.get_score() < swarm.best_agent.get_score() if is_minimization else best_ant.get_score() > swarm.best_agent.get_score()
 
         # Update global best if the current best ant is better
-        if swarm.best_agent is None or update_best:
-            swarm.best_agent = best_ant
+        if update_best:
+            swarm.best_agent.solution = best_ant.solution
 
         # Pheromone evaporation
         swarm.pheromone_matrix *= (1 - rho)
@@ -61,10 +63,10 @@ class SACO(AntBehavior):
         # Pheromone deposit
         delta_pheromone = np.zeros_like(swarm.pheromone_matrix)
         for ant in swarm.population:
-            path = ant.get_solution().get_representation()
+            path = ant.get_solution()
             for i in range(len(path) - 1):
                 delta_pheromone[path[i], path[i + 1]] += q / ant.get_score()
-        swarm.pheromone_matrix += delta_pheromone
+        swarm.pheromone_matrix = swarm.pheromone_matrix + delta_pheromone
 
     def get_pheromone_initial(self):
         return self.hyperparams["pheromone_0"]["value"]

@@ -24,7 +24,7 @@ class MMAS(AntBehavior):
 
     def move_swarm(self, swarm):
         problem = swarm.problem
-        rng = np.random.default_rng(seed=42)
+        rng = np.random.default_rng()
         alpha = self.hyperparams["alpha"]["value"]
         beta = self.hyperparams["beta"]["value"]
         while True:
@@ -56,17 +56,19 @@ class MMAS(AntBehavior):
         is_minimization = swarm.problem.is_minimization()
         func = min if is_minimization else max
         best_ant = func(swarm.population, key=lambda agent: agent.get_score())
+        if swarm.best_agent.solution is None:
+            swarm.best_agent.solution = best_ant.solution
         update_best = best_ant.get_score() < swarm.best_agent.get_score() if is_minimization else best_ant.get_score() > swarm.best_agent.get_score()
 
         # Update global best if the current best ant is better
-        if swarm.best_agent is None or update_best:
-            swarm.best_agent = best_ant
+        if update_best:
+            swarm.best_agent.solution = best_ant.solution
 
         # Pheromone evaporation
         swarm.pheromone_matrix *= (1 - rho)
 
         # Update pheromone levels on the global best ant's path
-        best_gobal_path = swarm.best_agent.get_solution().get_representation()
+        best_gobal_path = swarm.best_agent.get_solution()
         for i in range(len(best_gobal_path) - 1):
             new_pheromone = 1 / swarm.best_agent.get_score()
             swarm.pheromone_matrix[best_gobal_path[i], best_gobal_path[i + 1]] = np.clip(new_pheromone, tau_min, tau_max)

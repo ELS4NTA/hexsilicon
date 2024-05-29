@@ -22,27 +22,22 @@ class PSO(ParticleBehavior):
             updated_velocity = swarm.problem.clip_velocity(temp_velocity)  # Clip velocity
             swarm.velocities[i] = updated_velocity
             # Update position
-            for j in range(len(agent.get_solution())):
-                agent.get_solution()[j] += swarm.velocities[i][j]
-            agent.set_score(swarm.problem.call_function(agent.get_solution()))
+            if swarm.problem.is_binary():
+                agent.solution.representation = swarm.velocities[i]
+            else:
+                agent.solution.representation += swarm.velocities[i]
+            agent.set_score(swarm.problem.call_function(agent.solution))
 
     def update_swarm(self, swarm):
         for i, agent in enumerate(swarm.population):
-            self.update_personal_best(swarm, i, agent)
-            self.update_global_best(swarm, agent)
-
-    def update_personal_best(self, swarm, i, agent):
-        is_min = swarm.problem.is_minimization()
-        better = agent.get_score() < swarm.pbest_cost[i] if is_min else agent.get_score() > swarm.pbest_cost[i]
-        if better:
-            swarm.pbest[i] = agent.solution.get_representation()
-            swarm.pbest_cost[i] = agent.get_score()
-
-    def update_global_best(self, swarm, agent):
-        is_min = swarm.problem.is_minimization()
-        better = agent.get_score() < swarm.best_agent.get_score() if is_min else agent.get_score() > swarm.best_agent.get_score()
-        if better:
-            swarm.best_agent.solution = agent.solution
+            is_min = swarm.problem.is_minimization()
+            better = agent.get_score() < swarm.pcost[i] if is_min else agent.get_score() > swarm.pcost[i]
+            if better:
+                swarm.pbest[i] = agent.solution.get_representation()
+                swarm.pcost[i] = agent.get_score()
+                better_gb = agent.get_score() < swarm.best_agent.get_score() if is_min else agent.get_score() > swarm.best_agent.get_score()
+                if better_gb:
+                    swarm.best_agent.solution = agent.solution
 
     @staticmethod
     def get_description():
