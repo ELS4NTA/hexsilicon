@@ -10,9 +10,10 @@ from hexsilicon.presentation.runner.representation import Representation
 
 class Execution(ttk.Frame):
 
-    def __init__(self, master=None, hyperparams=None):
+    def __init__(self, master=None, hyperparams=None, visualization=None):
         super().__init__(master)
         self.hyperparams = hyperparams
+        self.visualization = visualization
         self.widget_frames = []
         self.create_widgets()
 
@@ -55,7 +56,7 @@ class Execution(ttk.Frame):
         self.history_frame = ttk.Labelframe(self.info_frame, text="Historial")
         self.graphic_frame = ttk.Labelframe(self.info_frame, text="Gráfica")
         self.history = History(self.history_frame)
-        self.graphic = Graphic(self.graphic_frame)
+        self.graphic = Graphic(self.graphic_frame, self.visualization)
         self.history.pack(side=TOP)
         self.graphic.pack(side=TOP)
         self.history_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=100)
@@ -70,8 +71,6 @@ class Execution(ttk.Frame):
         self.master.restore_configuration()
 
     def start_execution(self):
-        #self.instancia.generate_initial_swarm()
-        #self.instancia.metaheuristic()
         self.master.start_execution()
 
     def stop_execution(self):

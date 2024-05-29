@@ -1,5 +1,6 @@
-import ttkbootstrap as ttk
 from idlelib.tooltip import Hovertip
+
+import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
 

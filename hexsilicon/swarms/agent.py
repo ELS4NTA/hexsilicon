@@ -6,7 +6,7 @@ class Agent(object):
 
     def get_score(self):
         return self.solution.get_score()
-    
+
     def set_score(self, score):
         if self.solution is not None:
             self.solution.set_score(score)

@@ -1,8 +1,8 @@
+import numpy as np
+
 from hexsilicon.problems.solution import Solution
 from hexsilicon.swarms.agent import Agent
 from hexsilicon.swarms.swarm import Swarm
-
-import numpy as np
 
 
 class BirdFlocking(Swarm):

@@ -15,6 +15,7 @@ class Simulation(ttk.Window):
         self.title("Configuración de la Simulación")
         self.modules = self.load_modules("hexsilicon.swarms")
         self.modules.extend(self.load_modules("hexsilicon.problems"))
+        self.modules.extend(self.load_modules("hexsilicon.presentation.visualization"))
         self.configuration = None
         self.execution = None
         self.swarm = None
@@ -88,8 +89,7 @@ class Simulation(ttk.Window):
         problem_class = self.get_class(self.problem)
         self.problem = problem_class(self.context)
         self.swarm = swarm_class(algorithm_class, self.problem)
-        # context_class = self.get_class(self.context)
-        
+
     def start_execution(self):
         self.swarm.generate_swarm()
         self.swarm.metaheuristic()

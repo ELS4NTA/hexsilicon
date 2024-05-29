@@ -11,7 +11,7 @@ class Representation(Observer, ttk.Frame):
         self.master = master
         self.will_update = True
         self.create_widgets()
-    
+
     def create_widgets(self):
         self.show_btn = ttk.Button(self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
@@ -42,6 +42,5 @@ class Representation(Observer, ttk.Frame):
         iteration = list(swarm.history.keys())[-1]
         cost = swarm.best_agent.get_score()
         if self.will_update:
-            self.text.insert(float(iteration+1),
+            self.text.insert(float(iteration + 1),
                              f"Iteración {iteration} la mejor solución fue: {solution} con el costo {cost}\n")
-

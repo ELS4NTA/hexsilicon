@@ -29,7 +29,7 @@ class Knapsack(FreeProblem):
 
     def is_minimization(self):
         return True if self.representation['minimization'][0] == 'yes' else False  # type: ignore
-    
+
     def get_dimensions(self):
         return int(self.representation['n'][0])
 
@@ -52,7 +52,8 @@ class Knapsack(FreeProblem):
             "name": "Problema de la Mochila",
             "description": "Consiste en determinar la mejor combinación de objetos que se pueden llevar en una mochila.",
             "algorithms": "PSO",
-            "class_name": "Knapsack"
+            "class_name": "Knapsack",
+            "class_visualization": "KnapsackVisualization"
         }
 
     def get_restrictions(self):

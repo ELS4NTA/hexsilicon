@@ -14,7 +14,7 @@ class PSO(ParticleBehavior):
         c2 = self.get_hyperparams()["c2"]["value"]
         w = self.get_hyperparams()["w"]["value"]
         for i, agent in enumerate(swarm.population):
-            r1, r2 = rng.random(), rng.random()
+            r1, r2 = rng.uniform(), rng.uniform()
             # Calculate the cognitive and social components of velocity using list comprehensions
             cognitive = [c1 * r1 * (pb - x) for pb, x in zip(swarm.pbest[i], agent.get_solution())]
             social = [c2 * r2 * (gb - x) for gb, x in zip(swarm.best_agent.get_solution(), agent.get_solution())]

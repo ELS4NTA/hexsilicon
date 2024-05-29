@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from hexsilicon.swarms.behavior import Behavior
 
 

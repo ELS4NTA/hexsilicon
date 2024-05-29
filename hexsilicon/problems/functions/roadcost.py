@@ -2,7 +2,7 @@ from hexsilicon.problems.functions.function import Function
 
 
 class RoadCostFunction(Function):
-    
+
     def __init__(self):
         pass
 

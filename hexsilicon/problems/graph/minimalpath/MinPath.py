@@ -48,7 +48,8 @@ class MinPath(GraphProblem):
             "name": "Camino Mínimo",
             "description": "Consiste en determinar la distancia más corta que hay entre dos nodos de un grafo.",
             "algorithms": "SACO, MMAS",
-            "class_name": "MinPath"
+            "class_name": "MinPath",
+            "class_visualization": "GraphVisualization"
         }
 
     def get_restrictions(self):
