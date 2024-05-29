@@ -9,7 +9,7 @@ class PSO(ParticleBehavior):
         super().__init__(swarm)
 
     def move_swarm(self, swarm):
-        rng = np.random.default_rng(seed=42)
+        rng = np.random.default_rng()
         c1 = self.get_hyperparams()["c1"]["value"]
         c2 = self.get_hyperparams()["c2"]["value"]
         w = self.get_hyperparams()["w"]["value"]

@@ -15,7 +15,7 @@ class BirdFlocking(Swarm):
         self.history_pos = []
 
     def generate_swarm(self):
-        rng = np.random.default_rng(seed=42)
+        rng = np.random.default_rng()
         n_agents = self.get_hyperparams()["n_agents"]["value"]
         dimensions = self.problem.get_dimensions()
         max_velocity = self.get_hyperparams()["v_max"]["value"]
