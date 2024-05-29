@@ -15,16 +15,69 @@ class ParticleBehavior(Behavior):
             }
         }
         self.swarm = swarm
+        self.set_hyperparams()
 
+    def set_hyperparams(self):
+        self.hyperparams.update({
+            "v_min": {
+                "name": "Velocidad Minima",
+                "value": 0.0,
+                "range": (0.0, 1.0),
+                "description": "Define la velocidad mínima de las partículas"
+            },
+            "v_max": {
+                "name": "Velocidad Maxima",
+                "value": 1.0,
+                "range": (0.0, 1.0),
+                "description": "Define la velocidad máxima de las partículas"
+            },
+            "w": {
+                "name": "Constante Inercia",
+                "value": 1.0,
+                "range": (0.0, 5.0),
+                "description": "Reduce o aumenta la velocidad de la particula"
+            },
+            "c1": {
+                "name": "Constante Individual",
+                "value": 2.05,
+                "range": (0.0, 5.0),
+                "description": "Influencia de la mejor posición individual"
+            },
+            "c2": {
+                "name": "Constante Social",
+                "value": 2.05,
+                "range": (0.0, 5.0),
+                "description": "Influencia de la mejor posición global"
+            },
+        })
+
+    @abstractmethod
     def move_swarm(self, swarm):
+        """
+        Abstract method to define how the particles in the swarm move.
+        """
         pass
 
+    @abstractmethod
     def update_swarm(self, swarm):
-        pass
-
-    @staticmethod
-    def get_description():
+        """
+        Abstract method to define how the swarm is updated after each movement.
+        """
         pass
 
     def get_hyperparams(self):
+        """
+        Returns the hyperparameters for this behavior.
+
+        Returns:
+            dict: A dictionary containing the hyperparameters.
+        """
         return self.hyperparams
+
+    @staticmethod
+    @abstractmethod
+    def get_description():
+        """
+        Static method to get a description of the particle behavior.
+        """
+        pass

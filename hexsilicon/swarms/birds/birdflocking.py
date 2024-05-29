@@ -18,10 +18,10 @@ class BirdFlocking(Swarm):
         rng = np.random.default_rng(seed=42)
         n_agents = self.get_hyperparams()["n_agents"]["value"]
         dimensions = self.problem.get_dimensions()
-        max_velocity = int(self.get_hyperparams()["v_max"]["value"])
-        min_velocity = int(self.get_hyperparams()["v_min"]["value"])
-        self.velocities = (max_velocity - min_velocity) * rng.random(size=(n_agents, dimensions)) + min_velocity
-        print(self.velocities)
+        max_velocity = self.get_hyperparams()["v_max"]["value"]
+        min_velocity = self.get_hyperparams()["v_min"]["value"]
+        self.velocities = rng.uniform(low=min_velocity, high=max_velocity, size=(n_agents, dimensions))
+
         for _ in range(n_agents):
             bird = Agent("Bird")
             bird.solution = Solution(representation=self.problem.generate_solution())
@@ -31,6 +31,7 @@ class BirdFlocking(Swarm):
             self.history_pos.append(bird.solution.get_representation())
             self.pcost.append(score)
             self.population.append(bird)
+
         func = np.argmin if self.problem.is_minimization() else np.argmax
         self.best_agent = Agent("BestBird")
         self.best_agent.solution = Solution(representation=self.pbest[func(self.pcost)])

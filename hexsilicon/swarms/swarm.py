@@ -2,7 +2,6 @@ from abc import abstractmethod
 
 from hexsilicon.presentation.runner.observer import Observer
 from hexsilicon.problems.free.freeproblem import FreeProblem
-from hexsilicon.problems.problem import Problem
 from hexsilicon.swarms.observable import Observable
 
 

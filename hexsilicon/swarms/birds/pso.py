@@ -7,7 +7,6 @@ class PSO(ParticleBehavior):
 
     def __init__(self, swarm=None):
         super().__init__(swarm)
-        self.set_hyperparams()
 
     def move_swarm(self, swarm):
         rng = np.random.default_rng(seed=42)
@@ -15,75 +14,35 @@ class PSO(ParticleBehavior):
         c2 = self.get_hyperparams()["c2"]["value"]
         w = self.get_hyperparams()["w"]["value"]
         for i, agent in enumerate(swarm.population):
-            cognitive = [c1 * rng.uniform() * (swarm_pbest - agent_representation) for swarm_pbest, agent_representation
-                         in zip(swarm.pbest[i], agent.solution.representation)]
-
-            # cognitive = c1 * rng.uniform() * (swarm.pbest[i] - agent.solution.representation)
-            # social = c2 * rng.uniform() * (swarm.best_agent.solution.representation - agent.solution.representation)
-            social = [c2 * rng.uniform() * (swarm_best - agent_representation) for swarm_best, agent_representation in
-                      zip(swarm.best_agent.solution.representation, agent.solution.representation)]
-            temp_velocity = (w * swarm.velocities[i]) + cognitive + social
+            r1, r2 = rng.random(), rng.random()
+            # Calculate the cognitive and social components of velocity using list comprehensions
+            cognitive = [c1 * r1 * (pb - x) for pb, x in zip(swarm.pbest[i], agent.get_solution())]
+            social = [c2 * r2 * (gb - x) for gb, x in zip(swarm.best_agent.get_solution(), agent.get_solution())]
+            temp_velocity = (w * swarm.velocities[i]) + np.array(cognitive) + np.array(social)
             updated_velocity = swarm.problem.clip_velocity(temp_velocity)  # Clip velocity
             swarm.velocities[i] = updated_velocity
+            # Update position
+            for j in range(len(agent.get_solution())):
+                agent.get_solution()[j] += swarm.velocities[i][j]
+            agent.set_score(swarm.problem.call_function(agent.get_solution()))
 
     def update_swarm(self, swarm):
         for i, agent in enumerate(swarm.population):
-            swarm.history_pos[i] = agent.solution.representation
-            if swarm.problem.is_binary():
-                agent.solution.representation = [1 if v_i > 0.5 else 0 for v_i in swarm.velocities[i]]
-            else:
-                agent.solution.representation += swarm.velocities[i]
-            agent.set_score(swarm.problem.call_function(agent.solution))
-            if swarm.problem.is_minimization():
-                if agent.get_score() < swarm.pcost[i]:
-                    swarm.pbest[i] = agent.solution.get_representation()
-                    swarm.pcost[i] = agent.get_score()
-                    if agent.get_score() < swarm.best_agent.get_score():
-                        swarm.best_agent.solution = agent.solution
-            else:
-                print("Max")
-                if agent.get_score() > swarm.pcost[i]:
-                    swarm.pbest[i] = agent.solution.get_representation()
-                    swarm.pcost[i] = agent.get_score()
-                    if agent.get_score() > swarm.best_agent.get_score():
-                        swarm.best_agent.solution = agent.solution
+            self.update_personal_best(swarm, i, agent)
+            self.update_global_best(swarm, agent)
 
-    def get_hyperparams(self):
-        return self.hyperparams
+    def update_personal_best(self, swarm, i, agent):
+        is_min = swarm.problem.is_minimization()
+        better = agent.get_score() < swarm.pbest_cost[i] if is_min else agent.get_score() > swarm.pbest_cost[i]
+        if better:
+            swarm.pbest[i] = agent.solution.get_representation()
+            swarm.pbest_cost[i] = agent.get_score()
 
-    def set_hyperparams(self):
-        self.hyperparams = self.hyperparams | {
-            "v_min": {
-                "name": "Velocidad Minima",
-                "value": 0.0,
-                "range": (0.0, 1.0),
-                "description": "Define la velocidad mínima de las partículas"
-            },
-            "v_max": {
-                "name": "Velocidad Maxima",
-                "value": 1.0,
-                "range": (0.0, 1.0),
-                "description": "Define la velocidad máxima de las partículas"
-            },
-            "w": {
-                "name": "Constante Inercia",
-                "value": 1.0,
-                "range": (0.0, 5.0),
-                "description": "Reduce o aumenta la velocidad de la particula"
-            },
-            "c1": {
-                "name": "Constante Individual",
-                "value": 2.05,
-                "range": (0.0, 5.0),
-                "description": "Influencia de la mejor posición individual"
-            },
-            "c2": {
-                "name": "Constante Social",
-                "value": 2.05,
-                "range": (0.0, 5.0),
-                "description": "Influencia de la mejor posición global"
-            },
-        }
+    def update_global_best(self, swarm, agent):
+        is_min = swarm.problem.is_minimization()
+        better = agent.get_score() < swarm.best_agent.get_score() if is_min else agent.get_score() > swarm.best_agent.get_score()
+        if better:
+            swarm.best_agent.solution = agent.solution
 
     @staticmethod
     def get_description():
