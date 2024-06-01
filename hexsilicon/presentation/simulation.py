@@ -47,7 +47,7 @@ class Simulation(ttk.Window):
         self.problem = problem
         self.context = context
         self.instance_for_execution()
-        self.execution = Execution(master=self, hyperparams=self.swarm.get_hyperparams())
+        self.execution = Execution(master=self, hyperparams=self.swarm.get_hyperparams(), visualization=self.get_class(self.swarm.problem.get_description()['class_visualization']))
         self.swarm.subscribe(self.execution.history)
         self.swarm.subscribe(self.execution.graphic)
         self.swarm.subscribe(self.execution.environment)

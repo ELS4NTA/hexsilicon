@@ -51,7 +51,7 @@ class Knapsack(FreeProblem):
         return {
             "name": "Problema de la Mochila",
             "description": "Consiste en determinar la mejor combinación de objetos que se pueden llevar en una mochila.",
-            "algorithms": "PSO",
+            "algorithms": "PSO, FA",
             "class_name": "Knapsack",
             "class_visualization": "KnapsackVisualization"
         }
