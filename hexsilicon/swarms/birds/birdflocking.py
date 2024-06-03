@@ -13,14 +13,14 @@ class BirdFlocking(Swarm):
         self.pbest = []
         self.pcost = []
         self.history_pos = []
+        self.rng = np.random.default_rng()
 
     def generate_swarm(self):
-        rng = np.random.default_rng()
         n_agents = self.get_hyperparams()["n_agents"]["value"]
         dimensions = self.problem.get_dimensions()
         max_velocity = self.get_hyperparams()["v_max"]["value"]
         min_velocity = self.get_hyperparams()["v_min"]["value"]
-        self.velocities = rng.uniform(low=min_velocity, high=max_velocity, size=(n_agents, dimensions))
+        self.velocities = self.rng.uniform(low=min_velocity, high=max_velocity, size=(n_agents, dimensions))
 
         for _ in range(n_agents):
             bird = Agent("Bird")
@@ -37,13 +37,6 @@ class BirdFlocking(Swarm):
         self.best_agent.solution = Solution(representation=self.pbest[func(self.pcost)])
         self.best_agent.set_score(self.pcost[func(self.pcost)])
 
-    def metaheuristic(self):
-        num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
-        for i in range(num_iterations):
-            self.behavior.move_swarm(self)
-            self.behavior.update_swarm(self)
-            self.history[i] = self.best_agent.get_score()
-            self.notify(self)
 
     def get_passed_points_agent(self, idx):
         return self.history_pos[idx] + self.population[idx].solution.get_representation()

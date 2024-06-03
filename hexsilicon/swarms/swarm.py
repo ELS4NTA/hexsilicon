@@ -1,3 +1,4 @@
+import threading
 from abc import abstractmethod
 
 from hexsilicon.presentation.runner.observer import Observer
@@ -23,14 +24,19 @@ class Swarm(Observable):
         self.best_agent = None
         self.population = []
         self.observers = []
+        self.state = threading.Condition()
 
     @abstractmethod
     def generate_swarm(self):
         pass
 
-    @abstractmethod
     def metaheuristic(self):
-        pass
+        num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
+        for i in range(num_iterations):
+            self.behavior.move_swarm(self)
+            self.behavior.update_swarm(self)
+            self.history[i] = self.best_agent.get_score()
+            self.notify(self)
 
     @staticmethod
     @abstractmethod

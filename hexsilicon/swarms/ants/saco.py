@@ -17,33 +17,6 @@ class SACO(AntBehavior):
             }
         })
 
-    def move_swarm(self, swarm):
-        problem = swarm.problem
-        rng = np.random.default_rng()
-        alpha = self.hyperparams["alpha"]["value"]
-        beta = self.hyperparams["beta"]["value"]
-        while True:
-            current_node = problem.get_random_point()
-            path = [current_node]
-            is_good_path = True
-            while problem.check_restrictions(path) and is_good_path:
-                next_nodes = problem.get_next_nodes(current_node)
-                next_nodes = [node for node in next_nodes if node not in path]
-                if not next_nodes:
-                    is_good_path = False
-                    break
-                probabilities = np.zeros(len(next_nodes))
-                for i, next_node in enumerate(next_nodes):
-                    pheromone = swarm.get_edge_pheromone(current_node, next_node)
-                    weight = problem.get_edge_weight(current_node, next_node)
-                    probabilities[i] = (pheromone ** alpha) * ((1 / weight) ** beta)
-                probabilities /= probabilities.sum()
-                next_node = rng.choice(next_nodes, p=probabilities)
-                path.append(next_node)
-                current_node = next_node
-            if is_good_path:
-                return path
-
     def update_swarm(self, swarm):
         is_minimization = swarm.problem.is_minimization()
         q = self.hyperparams['q']['value']

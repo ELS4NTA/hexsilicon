@@ -24,15 +24,6 @@ class Fireflies(Swarm):
         self.best_agent.solution = Solution(representation=self.population[func(self.history_pos)].solution.get_representation())
         self.best_agent.set_score(self.problem.call_function(self.best_agent.solution))
 
-
-    def metaheuristic(self):
-        num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
-        for i in range(num_iterations):
-            self.behavior.move_swarm(self)
-            self.behavior.update_swarm(self)
-            self.history[i] = self.best_agent.get_score()
-            self.notify(self)
-
     def get_passed_points_agent(self, idx):
         return self.history_pos[idx] + self.population[idx].solution.get_representation()
 

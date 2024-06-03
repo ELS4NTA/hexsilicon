@@ -1,6 +1,5 @@
 import numpy as np
 
-from hexsilicon.problems.solution import Solution
 from hexsilicon.swarms.agent import Agent
 from hexsilicon.swarms.swarm import Swarm
 
@@ -16,22 +15,6 @@ class AntColony(Swarm):
         n_agents = self.get_hyperparams()["n_agents"]["value"]
         self.best_agent = Agent("QueenAnt")
         self.population = [Agent("Ant") for _ in range(n_agents)]
-
-    def metaheuristic(self):
-        num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
-
-        for i in range(num_iterations):
-            self.create_solutions()
-            self.behavior.update_swarm(self)
-            self.history[i] = self.best_agent.get_score()
-            self.path_history[i] = self.best_agent.get_solution()
-            self.notify(self)
-
-    def create_solutions(self):
-        for ant in self.population:
-            path = self.behavior.move_swarm(self)
-            ant.solution = Solution(representation=path)
-            ant.set_score(self.problem.call_function(ant.solution))
 
     def get_edge_pheromone(self, current_node, next_node):
         max_node_index = max(current_node, next_node)

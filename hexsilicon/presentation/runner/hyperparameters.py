@@ -1,7 +1,7 @@
-from idlelib.tooltip import Hovertip
-
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.toast import ToastNotification
+from ttkbootstrap.tooltip import ToolTip
 
 
 class Hyperparameters(ttk.Frame):
@@ -30,7 +30,7 @@ class Hyperparameters(ttk.Frame):
 
             container = ttk.Frame(self)
             label = ttk.Label(container, text=data["name"], bootstyle=PRIMARY)
-            Hovertip(container, data["description"])
+            ToolTip(container, data["description"])
             min_label = ttk.Label(container, text=data["range"][0])
             max_label = ttk.Label(container, text=data["range"][1])
             current_value_str = ttk.StringVar(value=data["value"])
@@ -61,9 +61,11 @@ class Hyperparameters(ttk.Frame):
             self.values[hyperparam] = [current_value_var, current_value_str]
 
     def update_hyperparams(self):
+        params_msg = ""
         for hyperparam in self.values.keys():
             self.hyperparams[hyperparam]["value"] = self.values[hyperparam][0].get()
-            print(f"{hyperparam}: {self.values[hyperparam][0].get()}")
+            params_msg += f"{self.hyperparams[hyperparam]['name']}: {self.values[hyperparam][0].get()}\n"
+        ToastNotification(title="Hiperparametros actualizados", message=params_msg, duration=3000).show_toast()
 
     def reset_hyperparams(self):
         for hyperparam in self.values.keys():

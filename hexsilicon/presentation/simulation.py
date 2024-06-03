@@ -1,5 +1,6 @@
 import importlib
 import pkgutil
+from threading import Thread
 
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
@@ -12,7 +13,6 @@ class Simulation(ttk.Window):
 
     def __init__(self):
         super().__init__()
-        self.title("Configuración de la Simulación")
         self.modules = self.load_modules("hexsilicon.swarms")
         self.modules.extend(self.load_modules("hexsilicon.problems"))
         self.modules.extend(self.load_modules("hexsilicon.presentation.visualization"))
@@ -21,32 +21,30 @@ class Simulation(ttk.Window):
         self.swarm = None
         self.algorithm = None
         self.problem = None
-        self.context = None
+        self.swarm_class = None
+        self.algorithm_class = None
+        self.problem_class = None
+
+        self.swarm_thread = None
+        self.execution_thread = None
         self.configure_window()
         self.create_widgets()
 
     def configure_window(self):
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        window_width = int(screen_width * 1)
-        window_height = int(screen_height * 1)
-        x = int((screen_width / 2) - (window_width / 2))
-        y = int((screen_height / 2) - (window_height / 2))
-        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        self.title("Hexsilicon")
         self.resizable(True, True)
+        self.state("zoomed")
+        self.iconbitmap("icons/icon.ico")
+        self.iconbitmap(default="icons/icon.ico")
 
     def create_widgets(self):
         self.configuration = Configuration(master=self)
         self.configuration.pack()
 
-    def start_simulation(self, swarm, algorithm, problem, context):
+    def start_simulation(self, swarm="", algorithm="", problem="", context=""):
         self.configuration.pack_forget() if self.configuration.winfo_ismapped() else None
-        self.title("Ejecución de la Simulación")
-        self.swarm = swarm
-        self.algorithm = algorithm
-        self.problem = problem
-        self.context = context
-        self.instance_for_execution()
+        self.execution.destroy() if self.execution else None
+        self.instance_for_execution(swarm, algorithm, problem, context)
         self.execution = Execution(master=self, hyperparams=self.swarm.get_hyperparams(), visualization=self.get_class(self.swarm.problem.get_description()['class_visualization']))
         self.swarm.subscribe(self.execution.history)
         self.swarm.subscribe(self.execution.graphic)
@@ -59,13 +57,11 @@ class Simulation(ttk.Window):
             package = importlib.import_module(package)
         submodules = []
         for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + '.'):
-            # Cargar el módulo (o submódulo)
+            # Load the module
             module = importlib.import_module(module_name)
-            if is_pkg:
-                # Si es un paquete, recursivamente cargar submódulos
+            if is_pkg:  # If module is a package, load its submodules
                 submodules.extend(self.load_modules(module))
-            else:
-                # Si no es un paquete, añadir a la lista de submódulos
+            else:  # If not a package, add the module to the list
                 submodules.append(module)
         return submodules
 
@@ -80,16 +76,21 @@ class Simulation(ttk.Window):
 
     def restore_configuration(self):
         self.execution.pack_forget() if self.execution.winfo_ismapped() else None
-        self.title("Configuración de la Simulación")
         self.configuration.pack()
 
-    def instance_for_execution(self):
-        swarm_class = self.get_class(self.swarm)
-        algorithm_class = self.get_class(self.algorithm)
-        problem_class = self.get_class(self.problem)
-        self.problem = problem_class(self.context)
-        self.swarm = swarm_class(algorithm_class, self.problem)
+    def instance_for_execution(self, swarm, algorithm, problem, context):
+        if swarm or algorithm or problem:
+            self.swarm_class = self.get_class(swarm)
+            self.algorithm_class = self.get_class(algorithm)
+            self.problem_class = self.get_class(problem)
+            self.problem = self.problem_class(context)
+        del self.swarm
+        self.swarm = self.swarm_class(self.algorithm_class, self.problem)
 
     def start_execution(self):
         self.swarm.generate_swarm()
-        self.swarm.metaheuristic()
+        self.swarm_thread = Thread(target=self.swarm.metaheuristic, daemon=True)
+        self.swarm_thread.start()
+
+    def stop_execution(self):
+        self.swarm_thread.stop()

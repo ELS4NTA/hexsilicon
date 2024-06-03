@@ -90,6 +90,4 @@ class Execution(ttk.Frame):
         pass
 
     def reset_execution(self):
-        for frame in self.widget_frames:
-            frame.destroy()
-        self.create_widgets()
+        self.master.start_simulation()

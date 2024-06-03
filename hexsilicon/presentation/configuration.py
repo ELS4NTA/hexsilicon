@@ -113,6 +113,9 @@ class Configuration(ttk.Frame):
                 self.content = file_obj.read()
 
     def start_simulation(self):
+        if not self.selected_swarm or not self.selected_algorithm or not self.selected_problem:
+            ttk.dialogs.dialogs.Messagebox.show_error("Por favor seleccione un enjambre, algoritmo y problema", "Error", parent=self.master)
+            return
         self.master.start_simulation(self.selected_swarm, self.selected_algorithm, self.selected_problem, self.content) # type: ignore
 
     def update_problem_description(self, *args):

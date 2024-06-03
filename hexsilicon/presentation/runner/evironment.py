@@ -2,9 +2,8 @@ import time
 
 import networkx as nx
 import ttkbootstrap as ttk
-
-from sklearn.decomposition import PCA
 from PIL import Image, ImageTk
+from sklearn.decomposition import PCA
 from ttkbootstrap.constants import *
 
 from hexsilicon.presentation.runner.observer import Observer
