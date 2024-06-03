@@ -41,7 +41,7 @@ class Knapsack(FreeProblem):
 
     def clip_velocity(self, temp_velocity):
         sigmoid_velocity = 1 / (1 + np.exp(-temp_velocity))
-        return np.where(sigmoid_velocity > 0.5, 1, 0)
+        return sigmoid_velocity
 
     def is_binary(self):
         return self.binary

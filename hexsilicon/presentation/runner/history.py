@@ -57,11 +57,16 @@ class History(Observer, ttk.Frame):
             self.ax.set_xlim(min(x), max(x))
         else:
             self.ax.set_xlim(min(x) - 1, max(x) + 1)
+            
+        y_min = min(y)
+        y_max = max(y)
+        y_range = y_max - y_min
+        padding = y_range * 0.1
 
         if len(set(y)) > 1:
-            self.ax.set_ylim(min(y), max(y))
+            self.ax.set_ylim(y_min - padding, y_max + padding)
         else:
-            self.ax.set_ylim(min(y) - 1, max(y) + 1)
+            self.ax.set_ylim(y_min - 1 - padding, y_max + 1 + padding)
 
         # Redibujar el canvas
         if self.will_update:

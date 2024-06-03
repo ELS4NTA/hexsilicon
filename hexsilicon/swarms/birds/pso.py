@@ -23,7 +23,7 @@ class PSO(ParticleBehavior):
             swarm.velocities[i] = updated_velocity
             # Update position
             if swarm.problem.is_binary():
-                agent.solution.representation = swarm.velocities[i]
+                agent.solution.representation = np.where(swarm.velocities[i] > np.random.rand(len(swarm.velocities[i])), 1, 0)
             else:
                 agent.solution.representation += swarm.velocities[i]
             agent.set_score(swarm.problem.call_function(agent.solution))
@@ -32,12 +32,13 @@ class PSO(ParticleBehavior):
         for i, agent in enumerate(swarm.population):
             is_min = swarm.problem.is_minimization()
             better = agent.get_score() < swarm.pcost[i] if is_min else agent.get_score() > swarm.pcost[i]
-            if better:
+            if better and swarm.problem.check_restrictions(agent.get_solution()):
                 swarm.pbest[i] = agent.solution.get_representation()
                 swarm.pcost[i] = agent.get_score()
                 better_gb = agent.get_score() < swarm.best_agent.get_score() if is_min else agent.get_score() > swarm.best_agent.get_score()
                 if better_gb:
-                    swarm.best_agent.solution = agent.solution
+                    swarm.best_agent.solution.representation = agent.solution.representation.copy()
+                    swarm.best_agent.set_score(agent.get_score())
 
     @staticmethod
     def get_description():

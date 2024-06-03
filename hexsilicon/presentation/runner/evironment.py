@@ -2,7 +2,8 @@ import time
 
 import networkx as nx
 import ttkbootstrap as ttk
-from umap import UMAP
+
+from sklearn.decomposition import PCA
 from PIL import Image, ImageTk
 from ttkbootstrap.constants import *
 
@@ -22,7 +23,7 @@ class Environment(Observer, ttk.Labelframe):
         self.speed_factor = 0.05
         self.current_point_index = 0
         self.x_velocity = self.y_velocity = 0
-        self.reducer = UMAP(n_components=2)
+        self.reducer = PCA(n_components=2)
 
     def create_widgets(self):
 
