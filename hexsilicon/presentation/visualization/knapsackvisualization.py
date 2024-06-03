@@ -6,10 +6,10 @@ from hexsilicon.presentation.visualization.problemvisualization import ProblemVi
 
 class KnapsackVisualization(ProblemVisualization):
 
-    def __init__(self):
-        pass
+    def __init__(self, fig):
+        self.ax = fig.add_subplot(111)
 
-    def draw(self, swarm, ax):
+    def draw(self, swarm):
         # 1. Get problem data:
         df = swarm.problem.get_representation()
 
@@ -34,7 +34,7 @@ class KnapsackVisualization(ProblemVisualization):
         num_objects = df.shape[0]
         colors = plt.cm.viridis(np.linspace(0, 1, num_objects))
 
-        ax.clear()
+        self.ax.clear()
 
         # Plot the stacked bar of profits
         bottom = np.zeros(2)
@@ -42,23 +42,23 @@ class KnapsackVisualization(ProblemVisualization):
             profits = df.iloc[i]['profit'] * np.array(
                 [swarm.best_agent.get_solution()[i], swarm.population[k].get_solution()[i]])
             if profits.any():
-                ax.bar(labels, profits, bottom=bottom, color=[colors[i], colors[i]], label=f'Object {i + 1}')
+                self.ax.bar(labels, profits, bottom=bottom, color=[colors[i], colors[i]], label=f'Object {i + 1}')
                 for j, profit in enumerate(profits):
                     if profit != 0:
-                        ax.text(j, bottom[j] + profit / 2, f'{profit}', ha='center', va='center',
+                        self.ax.text(j, bottom[j] + profit / 2, f'{profit}', ha='center', va='center',
                                 color='white')
                 bottom += profits
 
         # Show the weight of each bar on top of it
         for i, weight in enumerate(total_weight):
-            ax.text(i, total_profit[i], f'Weight: {weight}', ha='center', va='bottom', color='black')
+            self.ax.text(i, total_profit[i], f'Weight: {weight}', ha='center', va='bottom', color='black')
 
         # Set up labels and title
-        ax.set_xlabel('Soluciones')
-        ax.set_ylabel('Beneficio total')
-        ax.set_title('Beneficio y peso total de las soluciones')
-        ax.legend(title='Objetos')
+        self.ax.set_xlabel('Soluciones')
+        self.ax.set_ylabel('Beneficio total')
+        self.ax.set_title('Beneficio y peso total de las soluciones')
+        self.ax.legend(title='Objetos')
 
         # Show the legend of the colors of each item
-        handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles, labels, title='Objetos', bbox_to_anchor=(1.05, 1), loc='upper left')
+        handles, labels = self.ax.get_legend_handles_labels()
+        self.ax.legend(handles, labels, title='Objetos', bbox_to_anchor=(1.05, 1), loc='upper left')

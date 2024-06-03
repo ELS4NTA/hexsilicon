@@ -11,18 +11,18 @@ class Graphic(Observer, ttk.Frame):
     def __init__(self, master=None, visualization=None):
         super().__init__(master)
         self.master = master
-        self.problem_visualization = visualization()
         self.will_update = True
         self.first_time = True
         self.pos = None
         self.create_widgets()
+        self.problem_visualization = visualization(self.fig)
 
     def create_widgets(self):
         self.show_btn = ttk.Button(self, text="Ocultar", bootstyle="primary", command=self.toggle_frame)
         self.show_btn.pack()
 
         # Inicializar la figura y el canvas
-        self.fig, self.ax = plt.subplots(figsize=(7, 6), dpi=70)
+        self.fig = plt.figure(figsize=(7, 6), dpi=70)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
 
@@ -38,5 +38,5 @@ class Graphic(Observer, ttk.Frame):
 
     def update(self, swarm):
         if self.will_update:
-            self.problem_visualization.draw(swarm, self.ax)
+            self.problem_visualization.draw(swarm)
             self.canvas.draw()
