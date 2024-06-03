@@ -24,19 +24,18 @@ class Swarm(Observable):
         self.best_agent = None
         self.population = []
         self.observers = []
-        self.state = threading.Condition()
+        self.current_iteration = 0
 
     @abstractmethod
     def generate_swarm(self):
         pass
 
     def metaheuristic(self):
-        num_iterations = self.behavior.get_hyperparams()["n_iterations"]["value"]
-        for i in range(num_iterations):
-            self.behavior.move_swarm(self)
-            self.behavior.update_swarm(self)
-            self.history[i] = self.best_agent.get_score()
-            self.notify(self)
+        self.behavior.move_swarm(self)
+        self.behavior.update_swarm(self)
+        self.history[self.current_iteration] = self.best_agent.get_score()
+        self.current_iteration += 1
+        self.notify(self)
 
     @staticmethod
     @abstractmethod

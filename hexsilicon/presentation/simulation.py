@@ -1,6 +1,6 @@
 import importlib
 import pkgutil
-from threading import Thread
+from threading import Thread, Condition
 
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
@@ -89,11 +89,39 @@ class Simulation(ttk.Window):
 
     def start_execution(self):
         self.swarm.generate_swarm()
-        self.swarm_thread = Thread(target=self.swarm.metaheuristic, daemon=True)
+        self.swarm_thread = ExecutionThead(self.swarm)
         self.swarm_thread.start()
 
     def stop_execution(self):
         self.swarm_thread.stop()
 
+    def resume_execution(self):
+        self.swarm_thread.resume()
+
     def objective(self):
         return "Minimizar" if self.swarm.problem.is_minimization() else "Maximizar"
+
+
+class ExecutionThead(Thread):
+
+    def __init__(self, swarm, daemon=True):
+        super().__init__()
+        self.swarm = swarm
+        self.daemon = daemon
+        self.is_paused = False
+        self.state = Condition()
+
+    def run(self):
+        while self.swarm.current_iteration < self.swarm.behavior.get_hyperparams()["n_iterations"]["value"]:
+            with self.state:
+                while self.is_paused:
+                    self.state.wait()
+            self.swarm.metaheuristic()
+
+    def stop(self):
+        self.is_paused = True
+
+    def resume(self):
+        self.is_paused = False
+        with self.state:
+            self.state.notify()

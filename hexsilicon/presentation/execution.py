@@ -1,6 +1,9 @@
+import time
+
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
+from ttkbootstrap.toast import ToastNotification
 
 from hexsilicon.presentation.runner.evironment import Environment
 from hexsilicon.presentation.runner.graphic import Graphic
@@ -80,13 +83,23 @@ class Execution(ttk.Frame):
         self.widget_frames.append(self.environment)
 
     def return_to_config(self):
+        self.master.stop_execution()
         self.master.restore_configuration()
 
     def start_execution(self):
+        self.start_button.configure(state="disabled")
         self.master.start_execution()
 
     def stop_execution(self):
-        pass
+        ToastNotification(title="Información", message="Ejecución del algoritmo detenida", duration=3000).show_toast()
+        self.master.stop_execution()
+        self.stop_button.configure(text="Continuar", command=self.resume_execution)
+
+    def resume_execution(self):
+        ToastNotification(title="Información", message="Continuando ejecución del algoritmo", duration=3000).show_toast()
+        self.master.resume_execution()
+        self.stop_button.configure(text="Detener", command=self.stop_execution)
 
     def reset_execution(self):
+        self.master.stop_execution()
         self.master.start_simulation()
