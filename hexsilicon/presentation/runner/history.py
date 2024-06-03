@@ -20,7 +20,7 @@ class History(Observer, ttk.Frame):
         self.show_btn.pack()
 
         # Inicializar la figura y los ejes
-        self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=70)
+        self.fig, self.ax = plt.subplots(figsize=(7, 6), dpi=70)
         self.ax.set_xlabel("Iteración")
         self.ax.set_ylabel("Costo")
         self.ax.set_title("Función de costo")

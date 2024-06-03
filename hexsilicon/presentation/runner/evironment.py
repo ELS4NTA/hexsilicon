@@ -31,7 +31,7 @@ class Environment(Observer, ttk.Labelframe):
         self.show_btn.pack()
 
         # Crear un canvas para la imagen
-        self.canvas = ttk.Canvas(self, width=500, height=500)
+        self.canvas = ttk.Canvas(self, width=700, height=500)
         self.canvas.pack(expand=YES, fill=BOTH)
 
     def toggle_frame(self):
