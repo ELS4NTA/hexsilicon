@@ -11,7 +11,7 @@ class AntBehavior(Behavior):
                 "name": "Iterations",
                 "value": 50,
                 "range": (1, 1000),
-                "description": "Number of iterations in the swarm"
+                "description": "Cantidad de iteraciones en el enjambre"
             },
         }
         self.swarm = swarm
@@ -23,13 +23,13 @@ class AntBehavior(Behavior):
                 "name": "Initial Pheromone",
                 "value": 1.0,
                 "range": (0.0, 1.0),
-                "description": "Initial pheromone on each path"
+                "description": "Feromona inicial en las aristas"
             },
             "rho": {
                 "name": "Rho",
                 "value": 0.01,
                 "range": (0.0, 0.2),
-                "description": "Pheromone evaporation rate"
+                "description": "Tasa de evaporacion de feromona"
             },
             "alpha": {
                 "name": "Alpha",

@@ -10,55 +10,55 @@ class KnapsackVisualization(ProblemVisualization):
         pass
 
     def draw(self, swarm, ax):
-        # 1. Obtener datos del problema:
+        # 1. Get problem data:
         df = swarm.problem.get_representation()
 
-        # 3. Obtener las mejores soluciones:
+        # 3. Get the best solutions:
         func = np.argmin if swarm.problem.is_minimization() else np.argmax
         k = func([agent.get_score() for agent in swarm.population])
 
-        # 4. Filtrar los objetos seleccionados en cada solución:
-        mejor_global_indices = [i for i, val in enumerate(swarm.best_agent.get_solution()) if val == 1]
-        mejor_personal_indices = [i for i, val in enumerate(swarm.population[k].get_solution()) if val == 1]
+        # 4. Filter the selected objects in each solution:
+        global_best_indices = [i for i, val in enumerate(swarm.best_agent.get_solution()) if val == 1]
+        personal_best_indices = [i for i, val in enumerate(swarm.population[k].get_solution()) if val == 1]
 
-        # Obtener los datos para graficar
-        mejor_global_data = df.iloc[mejor_global_indices]
-        mejor_personal_data = df.iloc[mejor_personal_indices]
+        # Get the data to plot
+        global_best_data = df.iloc[global_best_indices]
+        personal_best_data = df.iloc[personal_best_indices]
 
-        # Configurar los datos para graficar la barra apilada
-        beneficio_total = [mejor_global_data['profit'].sum(), mejor_personal_data['profit'].sum()]
-        peso_total = [mejor_global_data['weight'].sum(), mejor_personal_data['weight'].sum()]
-        labels = ['Mejor Global', 'Mejor Personal']
+        # Set up the data to plot the stacked bar
+        total_profit = [global_best_data['profit'].sum(), personal_best_data['profit'].sum()]
+        total_weight = [global_best_data['weight'].sum(), personal_best_data['weight'].sum()]
+        labels = ['Global Best', 'Personal Best']
 
-        # Configurar los colores de cada objeto
-        num_objetos = df.shape[0]
-        colores = plt.cm.viridis(np.linspace(0, 1, num_objetos))
+        # Set up the colors of each object
+        num_objects = df.shape[0]
+        colors = plt.cm.viridis(np.linspace(0, 1, num_objects))
 
         ax.clear()
 
-        # Graficar la barra apilada de beneficios
+        # Plot the stacked bar of profits
         bottom = np.zeros(2)
-        for i in range(num_objetos):
-            beneficios = df.iloc[i]['profit'] * np.array(
+        for i in range(num_objects):
+            profits = df.iloc[i]['profit'] * np.array(
                 [swarm.best_agent.get_solution()[i], swarm.population[k].get_solution()[i]])
-            if beneficios.any():
-                ax.bar(labels, beneficios, bottom=bottom, color=[colores[i], colores[i]], label=f'Objeto {i + 1}')
-                for j, beneficio in enumerate(beneficios):
-                    if beneficio != 0:
-                        ax.text(j, bottom[j] + beneficio / 2, f'{beneficio}', ha='center', va='center',
+            if profits.any():
+                ax.bar(labels, profits, bottom=bottom, color=[colors[i], colors[i]], label=f'Object {i + 1}')
+                for j, profit in enumerate(profits):
+                    if profit != 0:
+                        ax.text(j, bottom[j] + profit / 2, f'{profit}', ha='center', va='center',
                                 color='white')
-                bottom += beneficios
+                bottom += profits
 
-        # Mostrar el peso de cada barra encima de la misma
-        for i, peso in enumerate(peso_total):
-            ax.text(i, beneficio_total[i], f'Peso: {peso}', ha='center', va='bottom', color='black')
+        # Show the weight of each bar on top of it
+        for i, weight in enumerate(total_weight):
+            ax.text(i, total_profit[i], f'Weight: {weight}', ha='center', va='bottom', color='black')
 
-        # Configurar etiquetas y título
-        ax.set_xlabel('Solución')
-        ax.set_ylabel('Beneficio Total')
-        ax.set_title('Barra Apilada de Beneficio Total y Peso Total')
+        # Set up labels and title
+        ax.set_xlabel('Soluciones')
+        ax.set_ylabel('Beneficio total')
+        ax.set_title('Beneficio y peso total de las soluciones')
         ax.legend(title='Objetos')
 
-        # Mostrar la leyenda de los colores de cada ítem
+        # Show the legend of the colors of each item
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles, labels, title='Objetos', bbox_to_anchor=(1.05, 1), loc='upper left')

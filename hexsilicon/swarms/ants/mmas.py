@@ -13,13 +13,13 @@ class MMAS(AntBehavior):
                 "name": "Tau Min",
                 "value": 0.001,
                 "range": (0.0, 1.0),
-                "description": "Minimum pheromone level"
+                "description": "Nivel mínimo de feromona"
             },
             "tau_max": {
                 "name": "Tau Max",
                 "value": 1.0,
                 "range": (0.0, 1.0),
-                "description": "Maximum pheromone level"
+                "description": "Nivel máximo de feromona"
             }
         })
 
