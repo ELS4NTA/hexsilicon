@@ -8,9 +8,10 @@ from hexsilicon.presentation.runner.observer import Observer
 
 class History(Observer, ttk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, value=None):
         super().__init__(master)
         self.master = master
+        self.value = value
         self.canvas = None
         self.will_update = True
         self.create_widgets()
@@ -50,6 +51,7 @@ class History(Observer, ttk.Frame):
         # Actualizar los datos del objeto Line2D
         x = list(history.keys())
         y = list(history.values())
+        self.value.configure(text=f"Fun: {y[-1]}")
         self.line.set_data(x, y)
 
         # Ajustar los límites de los ejes para acomodar los nuevos datos

@@ -6,9 +6,10 @@ from hexsilicon.presentation.runner.observer import Observer
 
 class Representation(Observer, ttk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, gauge=None):
         super().__init__(master)
         self.master = master
+        self.gauge = gauge
         self.will_update = True
         self.create_widgets()
 
@@ -40,6 +41,7 @@ class Representation(Observer, ttk.Frame):
     def update(self, swarm):
         solution = swarm.best_agent.get_solution()
         iteration = list(swarm.history.keys())[-1]
+        self.gauge.configure(value=iteration+1)
         cost = swarm.best_agent.get_score()
         if self.will_update:
             self.text.insert(float(iteration + 1),

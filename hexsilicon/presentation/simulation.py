@@ -94,3 +94,6 @@ class Simulation(ttk.Window):
 
     def stop_execution(self):
         self.swarm_thread.stop()
+
+    def objective(self):
+        return "Minimizar" if self.swarm.problem.is_minimization() else "Maximizar"

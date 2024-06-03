@@ -6,9 +6,10 @@ from ttkbootstrap.tooltip import ToolTip
 
 class Hyperparameters(ttk.Frame):
 
-    def __init__(self, master=None, hyperparams=None):
+    def __init__(self, master=None, hyperparams=None, gauge=None):
         super().__init__(master)
         self.master = master
+        self.gauge = gauge
         self.values = {}
         self.start_values = {}
         self.hyperparams = hyperparams
@@ -59,6 +60,7 @@ class Hyperparameters(ttk.Frame):
             slider.pack(side=LEFT, fill=X, expand=YES, padx=(5, 5))
             max_label.pack(side=LEFT)
             self.values[hyperparam] = [current_value_var, current_value_str]
+        self.gauge.configure(maximum=self.values['n_iterations'][0].get())
 
     def update_hyperparams(self):
         params_msg = ""
@@ -66,6 +68,7 @@ class Hyperparameters(ttk.Frame):
             self.hyperparams[hyperparam]["value"] = self.values[hyperparam][0].get()
             params_msg += f"{self.hyperparams[hyperparam]['name']}: {self.values[hyperparam][0].get()}\n"
         ToastNotification(title="Hiperparametros actualizados", message=params_msg, duration=3000).show_toast()
+        self.gauge.configure(maximum=self.values['n_iterations'][0].get())
 
     def reset_hyperparams(self):
         for hyperparam in self.values.keys():
