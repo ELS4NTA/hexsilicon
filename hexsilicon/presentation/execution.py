@@ -1,5 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.scrolled import ScrolledFrame
 
 from hexsilicon.presentation.runner.evironment import Environment
 from hexsilicon.presentation.runner.graphic import Graphic
@@ -34,7 +35,7 @@ class Execution(ttk.Frame):
         self.start_button.pack(side=LEFT, padx=10)
         self.stop_button.pack(side=LEFT, padx=10)
         self.reset_button.pack(side=LEFT, padx=10)
-        self.control_frame.grid(column=0, row=0, sticky=NW)
+        self.control_frame.grid(column=0, row=0, sticky=EW, pady=10, padx=10, ipady=10, ipadx=10)
         self.widget_frames.append(self.control_frame)
 
     def create_dashboard(self):
@@ -48,36 +49,25 @@ class Execution(ttk.Frame):
         self.dashboard_notebook.add(self.info_frame, text='Información')
         self.dashboard_notebook.add(self.hyper_frame, text='Hiperparametros')
         self.dashboard_notebook.add(self.representation, text='Representación')
-        self.dashboard_notebook.grid(column=1, row=0, rowspan=2, sticky=E)
+        self.dashboard_notebook.grid(column=1, row=0, rowspan=2, sticky=NS, pady=10, padx=10)
         self.widget_frames.append(self.dashboard_notebook)
 
     def create_information(self):
         self.info_frame = ttk.Frame(self.dashboard_notebook)
-
-        self.canvas = ttk.Canvas(self.info_frame, width=600, height=600)
-        self.canvas.pack(side=LEFT, fill=BOTH, expand=YES)
-
-        self.y_scrollbar = ttk.Scrollbar(self.info_frame, orient=VERTICAL, command=self.canvas.yview, bootstyle="primary-round")
-        self.y_scrollbar.pack(side=RIGHT, fill=Y)
-
-        self.canvas.configure(yscrollcommand=self.y_scrollbar.set)
-
-        self.inner_frame = ttk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.inner_frame, anchor=NW)
-        self.inner_frame.bind("<Configure>", lambda event: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-        self.canvas.bind_all("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
-        self.history_frame = ttk.Labelframe(self.inner_frame, text="Historial")
-        self.graphic_frame = ttk.Labelframe(self.inner_frame, text="Gráfica")
+        sf = ScrolledFrame(self.info_frame)
+        sf.pack(fill=BOTH, expand=YES)
+        self.history_frame = ttk.Labelframe(sf, text="Historial")
+        self.graphic_frame = ttk.Labelframe(sf, text="Gráfica")
         self.history = History(self.history_frame)
         self.graphic = Graphic(self.graphic_frame, self.visualization)
         self.history.pack(side=TOP)
         self.graphic.pack(side=TOP)
-        self.history_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=100)
-        self.graphic_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=100)
+        self.history_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=10)
+        self.graphic_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=10)
 
     def create_environment(self):
         self.environment = Environment(self)
-        self.environment.grid(column=0, row=1, sticky=N)
+        self.environment.grid(column=0, row=1, sticky=NSEW, pady=10, padx=10)
         self.widget_frames.append(self.environment)
 
     def return_to_config(self):
