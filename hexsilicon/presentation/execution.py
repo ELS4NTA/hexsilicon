@@ -53,8 +53,21 @@ class Execution(ttk.Frame):
 
     def create_information(self):
         self.info_frame = ttk.Frame(self.dashboard_notebook)
-        self.history_frame = ttk.Labelframe(self.info_frame, text="Historial")
-        self.graphic_frame = ttk.Labelframe(self.info_frame, text="Gráfica")
+
+        self.canvas = ttk.Canvas(self.info_frame, width=600, height=600)
+        self.canvas.pack(side=LEFT, fill=BOTH, expand=YES)
+
+        self.y_scrollbar = ttk.Scrollbar(self.info_frame, orient=VERTICAL, command=self.canvas.yview, bootstyle="primary-round")
+        self.y_scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.canvas.configure(yscrollcommand=self.y_scrollbar.set)
+
+        self.inner_frame = ttk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.inner_frame, anchor=NW)
+        self.inner_frame.bind("<Configure>", lambda event: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind_all("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
+        self.history_frame = ttk.Labelframe(self.inner_frame, text="Historial")
+        self.graphic_frame = ttk.Labelframe(self.inner_frame, text="Gráfica")
         self.history = History(self.history_frame)
         self.graphic = Graphic(self.graphic_frame, self.visualization)
         self.history.pack(side=TOP)

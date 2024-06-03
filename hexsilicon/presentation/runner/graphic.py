@@ -22,7 +22,7 @@ class Graphic(Observer, ttk.Frame):
         self.show_btn.pack()
 
         # Inicializar la figura y el canvas
-        self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=70)
+        self.fig, self.ax = plt.subplots(figsize=(7, 6), dpi=70)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack(expand=YES, fill=BOTH)
 
