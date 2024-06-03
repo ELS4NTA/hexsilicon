@@ -27,7 +27,8 @@ class FA(FireflyBehavior):
                     steps = self.alpha * epsilon
                     # Move the firefly
                     temp_move = firefly_i.get_solution() + attractiveness * (firefly_j.get_solution() - firefly_i.get_solution()) + steps
-                    updated_move = swarm.problem.clip_velocity(temp_move)
+                    sigmoid = swarm.problem.clip_velocity(temp_move)
+                    updated_move = np.where(self.rng.uniform(size=sigmoid.shape) < sigmoid, 1, 0)
                     firefly_i.solution.representation = updated_move
                     firefly_i.set_score(swarm.problem.call_function(firefly_i.solution))
 
