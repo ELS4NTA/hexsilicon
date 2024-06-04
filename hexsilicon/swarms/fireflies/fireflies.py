@@ -19,9 +19,8 @@ class Fireflies(Swarm):
             firefly.set_score(self.problem.call_function(firefly.solution))
             self.history_pos.append(firefly.solution.get_representation())
             self.population.append(firefly)
-        func = np.argmin if self.problem.is_minimization() else np.argmax
         self.best_agent = Agent("BestFirefly")
-        self.best_agent.solution = Solution(representation=self.population[func(self.history_pos)].solution.get_representation())
+        self.best_agent.solution = Solution(representation=self.population[0].solution.get_representation())
         self.best_agent.set_score(self.problem.call_function(self.best_agent.solution))
 
     def get_passed_points_agent(self, idx):

@@ -11,9 +11,10 @@ class MathematicalVisualization(ProblemVisualization):
 
     def draw(self, swarm):
         df = swarm.problem.get_representation()
-        limits = int(df['range'][0])
-        x = np.arange(-limits, limits, 0.2)
-        y = np.arange(-limits, limits, 0.2)
+        lower = df['lb'][0]
+        upper = df['ub'][0]
+        x = np.arange(lower, upper, 0.2)
+        y = np.arange(lower, upper, 0.2)
 
         X, Y = np.meshgrid(x, y)
         Z = (X-1)**2 + (Y-1)**2
@@ -30,8 +31,8 @@ class MathematicalVisualization(ProblemVisualization):
         self.ax.set_zlabel('Z')
         self.ax.set_title('Función Matemática')
         self.ax.set_zlim(0, 10)
-        self.ax.set_xlim(-limits, limits)
-        self.ax.set_ylim(-limits, limits)
+        self.ax.set_xlim(lower, upper)
+        self.ax.set_ylim(lower, upper)
 
 
 

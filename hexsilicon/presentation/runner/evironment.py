@@ -16,13 +16,14 @@ class Environment(Observer, ttk.Labelframe):
         super().__init__(master)
         self.create_widgets()
         self.configure(text="Ambiente")
-        self.image_ids = []
+        self.image_ids = {}
         self.will_update = True
         self.first_time = True
-        self.speed_factor = 0.05
+        self.speed_factor = 5
         self.current_point_index = 0
         self.x_velocity = self.y_velocity = 0
         self.reducer = PCA(n_components=2)
+        self.photo = None
 
     def create_widgets(self):
 
@@ -44,6 +45,10 @@ class Environment(Observer, ttk.Labelframe):
             self.show_btn.config(text="Ocultar")
 
     def update(self, swarm: Swarm):
+        if not self.photo:
+            image = Image.open(f"icons/{swarm.population[0].name}.png")
+            image = image.resize((24, 24))
+            self.photo = ImageTk.PhotoImage(image)
         if self.will_update:
             representation = swarm.to_2d()
             if not swarm.has_free_problem():
@@ -59,24 +64,16 @@ class Environment(Observer, ttk.Labelframe):
                 pos = {i: tuple(X_2d[i]) for i in range(len(X_2d))}
                 self.points = self.get_points(pos)
 
-            # Cargar la imagen
-            image = Image.open(f"icons/{swarm.population[0].name}.png")
-            image = image.resize((24, 24))
-            photo = ImageTk.PhotoImage(image)
-
-            # Dibujar la imagen en el canvas
+            # Draw the agents and do the movement
             for i, agent in enumerate(swarm.population):
-                if not swarm.has_free_problem():
-                    passed_points = self.get_points_solution(swarm.get_passed_points_agent(i))
-                else:
-                    passed_points = [self.points[i]]
-                image_id = self.canvas.create_image(passed_points[0][0], passed_points[0][1], anchor=NW, image=photo)  # Guardar el ID de la imagen
-                self.image_ids.append(image_id)  # Añadir el ID a la lista
-                self.current_point_index = 0
-                while self.current_point_index < len(passed_points):
-                    self.move(image_id, passed_points)
-                    self.master.update()
-                    time.sleep(0.01)
+                passed_points = self.get_points_solution(swarm.get_passed_points_agent(i)) if not swarm.has_free_problem() else [self.points[i]]
+                if agent not in self.image_ids:
+                    self.image_ids[agent] = self.canvas.create_image(passed_points[0][0], passed_points[0][1], image=self.photo)
+                image_id = self.image_ids[agent]
+                if len(passed_points) == 1:
+                    passed_points = [self.canvas.coords(image_id)] + passed_points
+                self.canvas.coords(image_id, passed_points[0][0], passed_points[0][1])
+                self.move(image_id, passed_points)
 
     def normalize(self, value, min_value, max_value, new_min, new_max):
         return ((value - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
@@ -89,8 +86,8 @@ class Environment(Observer, ttk.Labelframe):
         self.max_y = max(pos.values(), key=lambda x: x[1])[1]
 
         for key in pos:
-            x = self.normalize(pos[key][0], self.min_x, self.max_x, 0, self.canvas.winfo_width())
-            y = self.normalize(pos[key][1], self.min_y, self.max_y, 0, self.canvas.winfo_height())
+            x = self.normalize(pos[key][0], self.min_x, self.max_x, 50, self.canvas.winfo_width()-50)
+            y = self.normalize(pos[key][1], self.min_y, self.max_y, 50, self.canvas.winfo_height()-50)
             pos[key] = (x, y)
         return pos
 
@@ -98,15 +95,14 @@ class Environment(Observer, ttk.Labelframe):
         path_positions = [tuple(self.points[i]) for i in solution if i in self.points]
         return path_positions
 
-    def move(self, image_id, points):
-        current_coords = self.canvas.coords(image_id)
-        if abs(current_coords[0] - points[self.current_point_index][0]) < 1 and abs(current_coords[1] - points[self.current_point_index][1]) < 1:
-            if self.current_point_index == len(points) - 1:
-                self.current_point_index = self.current_point_index + 1
-                return
-            else:
-                self.current_point_index = (self.current_point_index + 1) % len(points)
-                next_point = points[self.current_point_index]
-                self.x_velocity = (next_point[0] - current_coords[0]) * self.speed_factor
-                self.y_velocity = (next_point[1] - current_coords[1]) * self.speed_factor
-        self.canvas.move(image_id, self.x_velocity, self.y_velocity)
+    def move(self, image_id, points, idx=0):
+        if idx < len(points):
+            current_coords = self.canvas.coords(image_id)
+            target_point = points[idx]
+            dx = (target_point[0] - current_coords[0]) / self.speed_factor
+            dy = (target_point[1] - current_coords[1]) / self.speed_factor
+            for _ in range(self.speed_factor):
+                self.canvas.move(image_id, dx, dy)
+                self.canvas.update()
+                time.sleep(0.01)
+            self.move(image_id, points, idx + 1)

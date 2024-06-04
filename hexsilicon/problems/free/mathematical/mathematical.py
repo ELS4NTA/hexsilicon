@@ -21,8 +21,7 @@ class Mathematical(FreeProblem):
         return int(self.representation['n'][0])
 
     def generate_solution(self):
-        domain_range = self.representation['range'][0]
-        solution = [random.uniform(-domain_range, domain_range) for _ in range(self.get_dimensions())]
+        solution = [random.uniform(self.representation['lb'][0], self.representation['ub'][0]) for _ in range(self.get_dimensions())]
         return solution
 
     def clip_velocity(self, temp_velocity):
@@ -33,7 +32,7 @@ class Mathematical(FreeProblem):
 
     def make_representation(self):
         df = pd.read_csv(StringIO(self.context), sep=';')
-        df.columns = ['n', 'range', 'minimization']
+        df.columns = ['n', 'lb', 'ub', 'minimization']
         return df
 
     @staticmethod
