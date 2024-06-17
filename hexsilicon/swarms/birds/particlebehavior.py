@@ -1,9 +1,15 @@
 from abc import abstractmethod
-
 from hexsilicon.swarms.behavior import Behavior
 
 
 class ParticleBehavior(Behavior):
+    """
+    A base class for defining particle behavior in a swarm.
+
+    Attributes:
+        hyperparams (dict): A dictionary containing the hyperparameters for the behavior.
+        swarm (Swarm): The swarm object associated with the behavior.
+    """
 
     def __init__(self, swarm=None):
         self.hyperparams = {
@@ -53,31 +59,16 @@ class ParticleBehavior(Behavior):
 
     @abstractmethod
     def move_swarm(self, swarm):
-        """
-        Abstract method to define how the particles in the swarm move.
-        """
         pass
 
     @abstractmethod
     def update_swarm(self, swarm):
-        """
-        Abstract method to define how the swarm is updated after each movement.
-        """
         pass
 
     def get_hyperparams(self):
-        """
-        Returns the hyperparameters for this behavior.
-
-        Returns:
-            dict: A dictionary containing the hyperparameters.
-        """
         return self.hyperparams
 
     @staticmethod
     @abstractmethod
     def get_description():
-        """
-        Static method to get a description of the particle behavior.
-        """
         pass

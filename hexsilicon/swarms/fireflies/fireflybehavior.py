@@ -4,6 +4,9 @@ from hexsilicon.swarms.behavior import Behavior
 
 
 class FireflyBehavior(Behavior):
+    """
+    Represents the behavior of fireflies in a swarm.
+    """
 
     def __init__(self, swarm=None):
         self.hyperparams = {

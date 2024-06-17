@@ -1,11 +1,20 @@
 import numpy as np
-
 from hexsilicon.problems.solution import Solution
 from hexsilicon.swarms.agent import Agent
 from hexsilicon.swarms.swarm import Swarm
 
 
 class BirdFlocking(Swarm):
+    """
+    Represents a swarm of birds using the Bird Flocking algorithm.
+
+    Attributes:
+        velocities (numpy.ndarray): The velocities of the birds in the swarm.
+        pbest (list): The personal best solutions of each bird in the swarm.
+        pcost (list): The cost of the personal best solutions of each bird in the swarm.
+        history_pos (list): The history of positions of each bird in the swarm.
+        rng (numpy.random.Generator): The random number generator used for generating velocities.
+    """
 
     def __init__(self, behavior=None, problem=None):
         super().__init__(behavior, problem)

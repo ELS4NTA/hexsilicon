@@ -45,6 +45,7 @@ class FA(FireflyBehavior):
         # Update global best if the current best firefly is better
         if update_best:
             swarm.best_agent.solution.representation = best_firefly.solution.representation.copy()
+            swarm.best_agent.set_score(best_firefly.get_score())
 
     @staticmethod
     def get_description():

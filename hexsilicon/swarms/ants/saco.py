@@ -1,10 +1,13 @@
 import numpy as np
-
 from hexsilicon.swarms.ants.antbehavior import AntBehavior
 
 
 # Simple Ant Colony Optimization (SACO) algorithm or Ant System (AS) algorithm
 class SACO(AntBehavior):
+    """
+    The SACO class represents the Simple Ant Colony Optimization algorithm.
+    It is the simplest algorithm in the ant colony optimization family.
+    """
 
     def __init__(self, swarm=None):
         super().__init__(swarm)

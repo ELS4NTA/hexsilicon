@@ -1,10 +1,16 @@
 import numpy as np
-
 from hexsilicon.swarms.ants.antbehavior import AntBehavior
 
 
 # Max-Min Ant System (MMAS) algorithm
 class MMAS(AntBehavior):
+    """
+    The MMAS (Max-Min Ant System) class represents an implementation of the ACO (Ant Colony Optimization) algorithm
+    with the Max-Min Ant System enhancement. It guarantees the convergence of the algorithm.
+
+    Attributes:
+        swarm (Swarm): The swarm associated with the behavior.
+    """
 
     def __init__(self, swarm=None):
         super().__init__(swarm)

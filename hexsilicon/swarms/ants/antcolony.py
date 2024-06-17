@@ -1,10 +1,16 @@
 import numpy as np
-
 from hexsilicon.swarms.agent import Agent
 from hexsilicon.swarms.swarm import Swarm
 
 
 class AntColony(Swarm):
+    """
+    Represents an ant colony swarm.
+
+    Attributes:
+        pheromone_matrix (numpy.ndarray): Matrix representing the pheromone levels between nodes.
+        path_history (dict): Dictionary storing the history of paths taken by the ants.
+    """
 
     def __init__(self, behavior, problem):
         super().__init__(behavior, problem)
@@ -17,6 +23,16 @@ class AntColony(Swarm):
         self.population = [Agent("Ant") for _ in range(n_agents)]
 
     def get_edge_pheromone(self, current_node, next_node):
+        """
+        Get the pheromone level of an edge between two nodes.
+
+        Parameters:
+            current_node (int): The index of the current node.
+            next_node (int): The index of the next node.
+
+        Returns:
+            float: The pheromone level of the edge between the current node and the next node.
+        """
         max_node_index = max(current_node, next_node)
         # Expand the pheromone matrix if needed
         if max_node_index >= self.pheromone_matrix.shape[0]:

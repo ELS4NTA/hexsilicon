@@ -1,11 +1,16 @@
 import numpy as np
-
 from hexsilicon.problems.solution import Solution
 from hexsilicon.swarms.agent import Agent
 from hexsilicon.swarms.swarm import Swarm
 
 
 class Fireflies(Swarm):
+    """
+    Represents a swarm of fireflies.
+
+    Attributes:
+        history_pos (list): A list to store the historical positions of the fireflies.
+    """
 
     def __init__(self, behavior=None, problem=None):
         super().__init__(behavior, problem)

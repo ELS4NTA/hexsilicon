@@ -1,20 +1,25 @@
 import numpy as np
-
 from hexsilicon.swarms.birds.particlebehavior import ParticleBehavior
 
 
 class PSO(ParticleBehavior):
+    """
+    The PSO (Particle Swarm Optimization) algorithm is a population-based optimization method.
+    Each particle represents a candidate solution in the search space. The particles move through
+    the search space following the best particle and the global best particle. PSO is a global
+    optimization algorithm that does not require derivatives and is easy to implement.
+    """
 
     def __init__(self, swarm=None):
         super().__init__(swarm)
+        self.rng = np.random.default_rng()
 
     def move_swarm(self, swarm):
-        rng = np.random.default_rng()
         c1 = self.get_hyperparams()["c1"]["value"]
         c2 = self.get_hyperparams()["c2"]["value"]
         w = self.get_hyperparams()["w"]["value"]
         for i, agent in enumerate(swarm.population):
-            r1, r2 = rng.uniform(), rng.uniform()
+            r1, r2 = self.rng.uniform(), self.rng.uniform()
             # Calculate the cognitive and social components of velocity using list comprehensions
             cognitive = [c1 * r1 * (pb - x) for pb, x in zip(swarm.pbest[i], agent.get_solution())]
             social = [c2 * r2 * (gb - x) for gb, x in zip(swarm.best_agent.get_solution(), agent.get_solution())]
