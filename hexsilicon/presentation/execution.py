@@ -1,97 +1,105 @@
+import time
+
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from hexsilicon.presentation.dashboard import Dashboard
-from hexsilicon.presentation.control import Control
-from hexsilicon.presentation.evironment import Environment
-import hexsilicon.domain.swarm.algorithms.ACO as ACO
-from hexsilicon.domain.problem.problem import Problem
-from hexsilicon.domain.problem.restriction import Restriction
-from hexsilicon.domain.problem.domain import Domain
-import pandas as pd
-from hexsilicon.domain.problem.problems.MinPathFunction import MinPathFunction
+from ttkbootstrap.scrolled import ScrolledFrame
+from ttkbootstrap.toast import ToastNotification
+
+from hexsilicon.presentation.runner.evironment import Environment
+from hexsilicon.presentation.runner.graphic import Graphic
+from hexsilicon.presentation.runner.history import History
+from hexsilicon.presentation.runner.hyperparameters import Hyperparameters
+from hexsilicon.presentation.runner.representation import Representation
 
 
 class Execution(ttk.Frame):
 
-    def __init__(self, master=None, algorithm=None, problem=None):
+    def __init__(self, master=None, hyperparams=None, visualization=None):
         super().__init__(master)
+        self.hyperparams = hyperparams
+        self.visualization = visualization
+        self.widget_frames = []
         self.create_widgets()
-        self.problem = problem
-        self.algorithm = algorithm
-        self.set_observers()
-        self.pack(expand=YES, fill=BOTH)
 
     def create_widgets(self):
-        self.control = Control(self)
-        self.dashboard = Dashboard(self)
-        self.environment = Environment(self)
         self.columnconfigure(0, weight=4)
         self.columnconfigure(1, weight=1)
-        self.control.grid(column=0, row=0, sticky=NW)
-        self.environment.grid(column=0, row=1, sticky=N)
-        self.dashboard.grid(column=1, row=0, rowspan=2, sticky=E)
+        self.create_control_buttons()
+        self.create_dashboard()
+        self.create_environment()
 
-    def place_widgets(self):
-        geometry = self.master.winfo_geometry()
-        window_width = int(geometry.split("x")[0])
-        window_height = int(geometry.split("x")[1].split("+")[0])
-        padding = 10
+    def create_control_buttons(self):
+        self.control_frame = ttk.Labelframe(self, text="Control")
+        self.back_button = ttk.Button(self.control_frame, text="Atras", command=self.return_to_config)
+        self.start_button = ttk.Button(self.control_frame, text="Iniciar", command=self.start_execution)
+        self.stop_button = ttk.Button(self.control_frame, text="Detener", command=self.stop_execution)
+        self.reset_button = ttk.Button(self.control_frame, text="Reiniciar", command=self.reset_execution)
+        self.back_button.pack(side=LEFT, padx=10)
+        self.start_button.pack(side=LEFT, padx=10)
+        self.stop_button.pack(side=LEFT, padx=10)
+        self.reset_button.pack(side=LEFT, padx=10)
+        self.control_frame.grid(column=0, row=0, sticky=EW, pady=10, padx=10, ipady=10, ipadx=10)
+        self.widget_frames.append(self.control_frame)
 
-        # Buttons to see problem, natual or stop execution
-        self.buttons_frame.place(x=padding, y=padding, width=window_width*0.66+padding, height=window_height*0.1)
-        self.see_problem_button.grid(row=0, column=0, padx=10)
-        self.start_execution_button.grid(row=0, column=1, padx=10)
-        self.stop_execution_button.grid(row=0, column=2, padx=10)
+    def create_dashboard(self):
+        self.dashboard_notebook = ttk.Notebook(self, bootstyle="primary")
+        self.create_information()
+        self.hyper_frame = Hyperparameters(self.dashboard_notebook, self.hyperparams, self.gauge)
+        self.representation = Representation(self.dashboard_notebook, self.gauge)
+        self.info_frame.pack(fill=BOTH, expand=YES)
+        self.hyper_frame.pack(fill=BOTH, expand=YES)
+        self.representation.pack(fill=BOTH, expand=YES)
+        self.dashboard_notebook.add(self.info_frame, text='Información')
+        self.dashboard_notebook.add(self.hyper_frame, text='Hiperparametros')
+        self.dashboard_notebook.add(self.representation, text='Representación')
+        self.dashboard_notebook.grid(column=1, row=0, rowspan=2, sticky=NS, pady=10, padx=10)
+        self.widget_frames.append(self.dashboard_notebook)
 
-        # Simulation environment
-        self.simulation_environment_frame.place(x=padding, y=padding+window_height*0.1, width=window_width*0.66+padding, height=window_height*0.5)
-        self.simulation_environment.grid(row=0, column=0)
+    def create_information(self):
+        self.info_frame = ttk.Frame(self.dashboard_notebook)
+        sf = ScrolledFrame(self.info_frame)
+        sf.pack(fill=BOTH, expand=YES)
+        self.values_frame = ttk.Labelframe(sf, text="Valores")
+        self.history_frame = ttk.Labelframe(sf, text="Historial")
+        self.graphic_frame = ttk.Labelframe(sf, text="Gráfica")
+        self.gauge = ttk.Floodgauge(self.values_frame, bootstyle=PRIMARY, length=100, mask='Iteración {}', )
+        self.objective = ttk.Label(self.values_frame, bootstyle="inverse-primary", text=self.master.objective(), anchor=CENTER)
+        self.func_val = ttk.Label(self.values_frame, bootstyle="inverse-primary", text="Fun", anchor=CENTER)
+        self.history = History(self.history_frame, self.func_val)
+        self.graphic = Graphic(self.graphic_frame, self.visualization)
+        self.values_frame.pack(side=TOP, fill=BOTH, expand=YES, padx=10)
+        self.objective.pack(side=LEFT, ipadx=10, ipady=15, padx=10)
+        self.func_val.pack(side=LEFT, ipadx=10, ipady=15, padx=10)
+        self.gauge.pack(side=LEFT, fill=X, expand=YES, padx=10)
+        self.history.pack(side=TOP)
+        self.graphic.pack(side=TOP)
+        self.values_frame.pack(side=TOP, fill=BOTH, expand=YES, padx=10)
+        self.history_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=10)
+        self.graphic_frame.pack(side=TOP, expand=YES, fill=BOTH, padx=10)
 
-    def see_problem(self):
-        pass
+    def create_environment(self):
+        self.environment = Environment(self)
+        self.environment.grid(column=0, row=1, sticky=NSEW, pady=10, padx=10)
+        self.widget_frames.append(self.environment)
+
+    def return_to_config(self):
+        self.master.stop_execution()
+        self.master.restore_configuration()
 
     def start_execution(self):
-        self.instancia.generate_initial_swarm()
-        self.instancia.metaheuristic()
+        self.start_button.configure(state="disabled")
+        self.master.start_execution()
 
     def stop_execution(self):
-        pass
+        ToastNotification(title="Información", message="Ejecución del algoritmo detenida", duration=3000).show_toast()
+        self.master.stop_execution()
+        self.stop_button.configure(text="Continuar", command=self.resume_execution)
 
-    def place_solution_results(self):
-        # pedir al enjmabre su mejor solucion global
-        # con la libreria nx construir el grafo
-        # guardar el grafo en una variable de matplotlib
-        # mostrar la variable en el grafico de tkinter-bootsrap
-        pass
+    def resume_execution(self):
+        ToastNotification(title="Información", message="Continuando ejecución del algoritmo", duration=3000).show_toast()
+        self.master.resume_execution()
+        self.stop_button.configure(text="Detener", command=self.stop_execution)
 
-    def place_history_function(self):
-        # pedir al enjambre su historia de la funcion
-        # crear una grafica de linea con la historia de la funcion
-        # guardar la grafica en una variable de matplotlib
-        # mostrar la variable en el grafico de tkinter-bootsrap
-        pass
-
-    def set_observers(self):
-        clase = getattr(ACO, self.algorithm)
-        print(clase)
-        print(type(clase))
-        problem = self.example_problem()
-
-        self.instancia = ACO.SACO(problem)
-        self.dashboard.set_hyperparams(self.instancia.get_hyperparams())
-        history = self.dashboard.get_history_frame()
-        graphic = self.dashboard.get_graphic_frame()
-        self.instancia.subscribe(history)
-        self.instancia.subscribe(graphic)
-
-
-    def example_problem(self):
-        df = pd.DataFrame({'source': [1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5],
-                           'target': [2, 3, 6, 3, 7, 6, 7, 5, 5, 7, 6],
-                           'weight': [5, 3.1, 5.2, 4.9, 5.2, 3.2, 3, 6, 5.5, 4.8, 4.7]})
-        dict_restrictions = {'initial_point': 1, 'final_point': 4}
-        R = Restriction(dict_restrictions)
-        D = Domain(df, R)
-        return Problem(D, MinPathFunction())
-
-
+    def reset_execution(self):
+        self.master.stop_execution()
+        self.master.start_simulation()
